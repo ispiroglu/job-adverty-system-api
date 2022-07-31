@@ -5,23 +5,21 @@ import com.lcwaikiki.advertservice.dto.UpdateUserRequest;
 import com.lcwaikiki.advertservice.dto.UserCredentialDto;
 import com.lcwaikiki.advertservice.dto.converter.UserDtoConverter;
 import com.lcwaikiki.advertservice.exception.UserNotFoundException;
+import com.lcwaikiki.advertservice.model.ApplicationDetail;
 import com.lcwaikiki.advertservice.model.User;
 import com.lcwaikiki.advertservice.repository.UserRepository;
 import java.util.List;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
   private final UserRepository userRepository;
-  private final ModelMapper modelMapper;
   private final UserDtoConverter userDtoConverter;
 
-  public UserService(UserRepository userRepository, ModelMapper modelMapper,
+  public UserService(UserRepository userRepository,
       UserDtoConverter userDtoConverter) {
     this.userRepository = userRepository;
-    this.modelMapper = modelMapper;
     this.userDtoConverter = userDtoConverter;
   }
 
@@ -51,6 +49,12 @@ public class UserService {
   public void deleteUser(Long id) throws UserNotFoundException {
     User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
     userRepository.delete(user);
+  }
+
+  public void addApplicationToUser(User user, ApplicationDetail application) {
+    user.addApplication(application);
+    System.out.println(user);
+    userRepository.save(user);
   }
 
   public List<User> findAll() {

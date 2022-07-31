@@ -1,9 +1,11 @@
 package com.lcwaikiki.advertservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -40,7 +42,7 @@ public class Advert {
   @Column
   private String jobDefinition;
   @Column
-  private boolean isActive;
+  private boolean active;
   @Column
   private String photoUrl;
   @Column
@@ -51,15 +53,16 @@ public class Advert {
   private LocalDateTime creationDate;
   @UpdateTimestamp
   private LocalDateTime update;
-
-  @Column
-  @OneToMany
-  private List<User> applicants;
+  @OneToMany(mappedBy = "advert")
+//  @JsonManagedReference
+  @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+  private Set<ApplicationDetail> applications;
 
   public Advert(Long id, String name, String summary, Date startDate, Date endDate,
       String position, int capacity, String district, String province, int provinceID,
-      String jobDefinition, boolean isActive, String photoUrl, String companyName,
-      String department, LocalDateTime creationDate, LocalDateTime update, List<User> applicants) {
+      String jobDefinition, boolean active, String photoUrl, String companyName,
+      String department, LocalDateTime creationDate, LocalDateTime update,
+      Set<ApplicationDetail> applications) {
     this.id = id;
     this.name = name;
     this.summary = summary;
@@ -71,13 +74,13 @@ public class Advert {
     this.province = province;
     this.provinceID = provinceID;
     this.jobDefinition = jobDefinition;
-    this.isActive = isActive;
+    this.active = active;
     this.photoUrl = photoUrl;
     this.companyName = companyName;
     this.department = department;
     this.creationDate = creationDate;
     this.update = update;
-    this.applicants = applicants;
+    this.applications = applications;
   }
 
   public Advert() {
@@ -86,7 +89,7 @@ public class Advert {
 
   public Advert(String name, String summary, Date startDate, Date endDate, String position,
       int capacity, String district, String province, int provinceID, String jobDefinition,
-      boolean isActive, String photoUrl, String companyName, String department) {
+      boolean active, String photoUrl, String companyName, String department) {
     this.name = name;
     this.summary = summary;
     this.startDate = startDate;
@@ -97,7 +100,7 @@ public class Advert {
     this.province = province;
     this.provinceID = provinceID;
     this.jobDefinition = jobDefinition;
-    this.isActive = isActive;
+    this.active = active;
     this.photoUrl = photoUrl;
     this.companyName = companyName;
     this.department = department;
@@ -192,11 +195,11 @@ public class Advert {
   }
 
   public boolean isActive() {
-    return isActive;
+    return active;
   }
 
   public void setActive(boolean active) {
-    isActive = active;
+    this.active = active;
   }
 
   public String getPhotoUrl() {
@@ -223,12 +226,13 @@ public class Advert {
     this.department = department;
   }
 
-  public List<User> getApplicants() {
-    return applicants;
+  public Set<ApplicationDetail> getApplications() {
+    return applications;
   }
 
-  public void setApplicants(List<User> applicants) {
-    this.applicants = applicants;
+  public void setApplications(
+      Set<ApplicationDetail> applications) {
+    this.applications = applications;
   }
 
   public LocalDateTime getCreationDate() {
@@ -252,9 +256,8 @@ public class Advert {
     return baseAdvert;
   }
 
-  public User addApplicantToAdvert(User applicant) {
-    applicants.add(applicant);
-    return applicant;
+  public void addApplication(ApplicationDetail application) {
+    applications.add(application);
   }
 
   @Override
@@ -267,20 +270,20 @@ public class Advert {
     }
     Advert advert = (Advert) o;
     return capacity == advert.capacity && provinceID == advert.provinceID
-        && isActive == advert.isActive && id.equals(advert.id) && name.equals(advert.name)
+        && active == advert.active && id.equals(advert.id) && name.equals(advert.name)
         && summary.equals(advert.summary) && startDate.equals(advert.startDate)
         && endDate.equals(advert.endDate) && position.equals(advert.position)
         && district.equals(advert.district) && province.equals(advert.province)
         && jobDefinition.equals(advert.jobDefinition) && photoUrl.equals(advert.photoUrl)
         && companyName.equals(advert.companyName) && department.equals(advert.department)
-        && applicants.equals(advert.applicants);
+        && applications.equals(advert.applications);
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(id, name, summary, startDate, endDate, position, capacity, district,
-        province, provinceID, jobDefinition, isActive, photoUrl, companyName, department,
-        applicants);
+        province, provinceID, jobDefinition, active, photoUrl, companyName, department,
+        applications);
   }
 
   @Override
@@ -297,11 +300,11 @@ public class Advert {
         ", province='" + province + '\'' +
         ", provinceID=" + provinceID +
         ", jobDefinition='" + jobDefinition + '\'' +
-        ", isOpen=" + isActive +
+        ", isActive=" + active +
         ", photoUrl='" + photoUrl + '\'' +
         ", companyName='" + companyName + '\'' +
         ", department='" + department + '\'' +
-        ", applicants=" + applicants +
+        ", applicants=" + applications +
         '}';
   }
 }

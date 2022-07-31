@@ -39,9 +39,6 @@ public class CreateAdvertRequest {
   private String jobDefinition;
   @NotNull
   @NotEmpty
-  private boolean isActive;
-  @NotNull
-  @NotEmpty
   private String photoUrl;
   @NotNull
   @NotEmpty
@@ -53,7 +50,7 @@ public class CreateAdvertRequest {
 
   public CreateAdvertRequest(String name, String summary, Date startDate, Date endDate,
       String position, int capacity, String district, String province, int provinceID,
-      String jobDefinition, boolean isActive, String photoUrl, String companyName,
+      String jobDefinition, String photoUrl, String companyName,
       String department) {
     this.name = name;
     this.summary = summary;
@@ -65,7 +62,6 @@ public class CreateAdvertRequest {
     this.province = province;
     this.provinceID = provinceID;
     this.jobDefinition = jobDefinition;
-    this.isActive = isActive;
     this.photoUrl = photoUrl;
     this.companyName = companyName;
     this.department = department;
@@ -112,9 +108,6 @@ public class CreateAdvertRequest {
     return jobDefinition;
   }
 
-  public boolean isActive() {
-    return isActive;
-  }
 
   public String getPhotoUrl() {
     return photoUrl;

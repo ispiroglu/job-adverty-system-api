@@ -2,10 +2,12 @@ package com.lcwaikiki.advertservice.service;
 
 import com.lcwaikiki.advertservice.dto.AdvertDetailsDto;
 import com.lcwaikiki.advertservice.dto.CreateAdvertRequest;
+import com.lcwaikiki.advertservice.dto.GetFilteredAdvertsRequest;
 import com.lcwaikiki.advertservice.dto.UpdateAdvertRequest;
 import com.lcwaikiki.advertservice.dto.converter.AdvertDtoConverter;
 import com.lcwaikiki.advertservice.exception.AdvertNotFoundException;
 import com.lcwaikiki.advertservice.model.Advert;
+import com.lcwaikiki.advertservice.model.ApplicationDetail;
 import com.lcwaikiki.advertservice.repository.AdvertRepository;
 import java.util.List;
 import org.modelmapper.ModelMapper;
@@ -29,6 +31,8 @@ public class AdvertService {
 
   public AdvertDetailsDto createAdvert(CreateAdvertRequest createAdvertRequest) {
     Advert advert = advertDtoConverter.convertToAdvert(createAdvertRequest);
+//    advert.setActive(true);
+    System.out.println(advert);
     return advertDtoConverter.convertToAdvertDetailsDto(advertRepository.save(advert));
   }
 
@@ -58,6 +62,17 @@ public class AdvertService {
   public void deleteAdvert(long id) throws AdvertNotFoundException {
     Advert advert = advertRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
     advert.setActive(false);
+    advertRepository.save(advert);
+  }
+
+  public List<Advert> findFilteredAdverts(GetFilteredAdvertsRequest request) {
+    return advertRepository.findAdvertsByFullFilter(request.getProvince(), request.getPosition(),
+        request.getDepartment(), request.getSearchText());
+  }
+
+  public void addUserToAdvert(Advert advert, ApplicationDetail application) {
+    advert.addApplication(application);
+    System.out.println(advert);
     advertRepository.save(advert);
   }
 

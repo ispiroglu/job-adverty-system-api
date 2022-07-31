@@ -1,12 +1,15 @@
 package com.lcwaikiki.advertservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -44,16 +47,15 @@ public class User {
     this.creationDate = creationDate;
   }
 
-//  @ManyToMany
-//  @JoinColumn(name = "advert_id")
-//  private List<ApplicationDetail> applicationDetails;
-
+  @OneToMany(mappedBy = "user")
+//  @JsonManagedReference
+  @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+  private Set<ApplicationDetail> applications;
 
   public User(Long id, String firstname, String lastname, String gender, String email,
-      String password,
-      String phoneNumber, String province, int provinceID, String district, int experience,
-      String aboutUser, List<ApplicationDetail> applicationDetails, boolean isEmployer,
-      LocalDateTime update) {
+      String password, String phoneNumber, String province, int provinceID, String district,
+      int experience, String aboutUser, boolean isEmployer, LocalDateTime creationDate,
+      LocalDateTime update, Set<ApplicationDetail> applications) {
     this.id = id;
     this.firstname = firstname;
     this.lastname = lastname;
@@ -66,9 +68,10 @@ public class User {
     this.district = district;
     this.experience = experience;
     this.aboutUser = aboutUser;
-//    this.applicationDetails = applicationDetails;
     this.isEmployer = isEmployer;
+    this.creationDate = creationDate;
     this.update = update;
+    this.applications = applications;
   }
 
   public User(boolean isEmployer, String email, String password) {
@@ -185,6 +188,16 @@ public class User {
 //    this.applicationDetails = applicationDetails;
 //  }
 
+
+  public Set<ApplicationDetail> getApplications() {
+    return applications;
+  }
+
+  public void setApplications(
+      Set<ApplicationDetail> applications) {
+    this.applications = applications;
+  }
+
   public boolean isEmployer() {
     return isEmployer;
   }
@@ -207,6 +220,7 @@ public class User {
         ", district='" + district + '\'' +
         ", experience=" + experience +
         ", aboutUser='" + aboutUser + '\'' +
+        ", applicationDetails=" + applications +
 //        ", applicationDetails=" + applicationDetails +
         '}';
   }
@@ -218,4 +232,9 @@ public class User {
   public void setUpdate(LocalDateTime update) {
     this.update = update;
   }
+
+  public void addApplication(ApplicationDetail application) {
+    applications.add(application);
+  }
+
 }

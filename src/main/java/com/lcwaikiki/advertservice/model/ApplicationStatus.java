@@ -1,15 +1,15 @@
 package com.lcwaikiki.advertservice.model;
 
 public enum ApplicationStatus {
-    REJECT("Rejected"), ACCEPT("Accepted"), PENDING("Pending");
+  REJECT("Rejected"), ACCEPT("Accepted"), PENDING("Pending");
 
-    private String status;
+  private String status;
 
-    ApplicationStatus(String status) {
-        this.status = status;
-    }
+  ApplicationStatus(String status) {
+    this.status = status;
+  }
 
-    public String getStatus() {
-        return status;
-    }
+  public String getStatus() {
+    return status;
+  }
 }

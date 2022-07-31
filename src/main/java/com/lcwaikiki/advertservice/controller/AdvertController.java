@@ -1,11 +1,15 @@
 package com.lcwaikiki.advertservice.controller;
 
+import com.lcwaikiki.advertservice.dto.AddApplicantRequest;
 import com.lcwaikiki.advertservice.dto.AdvertDetailsDto;
 import com.lcwaikiki.advertservice.dto.CreateAdvertRequest;
+import com.lcwaikiki.advertservice.dto.GetFilteredAdvertsRequest;
 import com.lcwaikiki.advertservice.dto.UpdateAdvertRequest;
 import com.lcwaikiki.advertservice.exception.AdvertNotFoundException;
+import com.lcwaikiki.advertservice.exception.UserNotFoundException;
 import com.lcwaikiki.advertservice.model.Advert;
 import com.lcwaikiki.advertservice.service.AdvertService;
+import com.lcwaikiki.advertservice.service.OperationHandlerService;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -25,9 +29,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdvertController {
 
   private final AdvertService advertService;
+  private final OperationHandlerService operationHandlerService;
 
-  public AdvertController(AdvertService advertService) {
+  public AdvertController(AdvertService advertService,
+      OperationHandlerService operationHandlerService) {
     this.advertService = advertService;
+    this.operationHandlerService = operationHandlerService;
   }
 
   @GetMapping
@@ -61,13 +68,16 @@ public class AdvertController {
     advertService.deleteAdvert(id);
   }
 
-//  @ResponseStatus(HttpStatus.CREATED)
-//  @PutMapping("/{id}")
-//  public Advert addApplicant(@RequestBody User applicant, @PathVariable Long id)
-//      throws AdvertNotFoundException {
-//    Advert advert = advertRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
-//    advert.addApplicantToAdvert(applicant);
-//
-//    return advertRepository.save(advert);
-//  }
+  @GetMapping("/filter")
+  public List<Advert> findFilteredAdverts(GetFilteredAdvertsRequest request) {
+    return advertService.findFilteredAdverts(request);
+  }
+
+  @PutMapping("/{id}")
+  public void addUserToAdvert(AddApplicantRequest request, @PathVariable Long id)
+      throws UserNotFoundException, AdvertNotFoundException {
+    System.out.println(id);
+    System.out.println("-----------------------------------------------------------------");
+    operationHandlerService.addApplicantToAdvert(request.getUserId(), id);
+  }
 }

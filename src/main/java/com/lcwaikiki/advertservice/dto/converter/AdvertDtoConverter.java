@@ -2,6 +2,7 @@ package com.lcwaikiki.advertservice.dto.converter;
 
 import com.lcwaikiki.advertservice.dto.AdvertDetailsDto;
 import com.lcwaikiki.advertservice.dto.CreateAdvertRequest;
+import com.lcwaikiki.advertservice.dto.GetFilteredAdvertsRequest;
 import com.lcwaikiki.advertservice.dto.UpdateAdvertRequest;
 import com.lcwaikiki.advertservice.model.Advert;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,7 @@ public class AdvertDtoConverter {
         createAdvertRequest.getCapacity(), createAdvertRequest.getDistrict(),
         createAdvertRequest.getProvince(),
         createAdvertRequest.getProvinceID(), createAdvertRequest.getJobDefinition(),
-        createAdvertRequest.isActive(),
+        true,
         createAdvertRequest.getPhotoUrl(), createAdvertRequest.getCompanyName(),
         createAdvertRequest.getDepartment());
   }
@@ -43,5 +44,14 @@ public class AdvertDtoConverter {
         updateAdvertRequest.isActive(),
         updateAdvertRequest.getPhotoUrl(), updateAdvertRequest.getCompanyName(),
         updateAdvertRequest.getDepartment());
+  }
+
+  public Advert convertToAdvert(GetFilteredAdvertsRequest request) {
+    Advert advert = new Advert();
+    advert.setDepartment(request.getDepartment());
+    advert.setProvince(request.getProvince());
+    advert.setPosition(request.getPosition());
+
+    return advert;
   }
 }

@@ -25,7 +25,7 @@ public class UpdateAdvertRequest {
 
   private String jobDefinition;
 
-  private boolean isActive;
+  private boolean active;
 
   private String photoUrl;
 
@@ -36,7 +36,7 @@ public class UpdateAdvertRequest {
 
   public UpdateAdvertRequest(String name, String summary, Date startDate, Date endDate,
       String position, int capacity, String district, String province, int provinceID,
-      String jobDefinition, boolean isActive, String photoUrl, String companyName,
+      String jobDefinition, boolean active, String photoUrl, String companyName,
       String department) {
     this.name = name;
     this.summary = summary;
@@ -48,7 +48,7 @@ public class UpdateAdvertRequest {
     this.province = province;
     this.provinceID = provinceID;
     this.jobDefinition = jobDefinition;
-    this.isActive = isActive;
+    this.active = active;
     this.photoUrl = photoUrl;
     this.companyName = companyName;
     this.department = department;
@@ -95,7 +95,7 @@ public class UpdateAdvertRequest {
   }
 
   public boolean isActive() {
-    return isActive;
+    return active;
   }
 
   public String getPhotoUrl() {
