@@ -1,15 +1,20 @@
 package com.lcwaikiki.advertservice.controller;
 
 
-import com.lcwaikiki.advertservice.dto.CreateUserRequest;
-import com.lcwaikiki.advertservice.dto.UpdateUserRequest;
-import com.lcwaikiki.advertservice.dto.UserCredentialDto;
+import com.lcwaikiki.advertservice.dto.model.user.UserCredentialDto;
+import com.lcwaikiki.advertservice.dto.request.user.CreateUserRequest;
+import com.lcwaikiki.advertservice.dto.request.user.UpdateUserCvRequest;
+import com.lcwaikiki.advertservice.dto.request.user.UpdateUserPhotoRequest;
+import com.lcwaikiki.advertservice.dto.request.user.UpdateUserRequest;
+import com.lcwaikiki.advertservice.dto.response.user.UserApplicationsResponse;
 import com.lcwaikiki.advertservice.exception.UserNotFoundException;
 import com.lcwaikiki.advertservice.model.User;
 import com.lcwaikiki.advertservice.service.UserService;
+import java.io.IOException;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,4 +69,33 @@ public class UserController {
     userService.deleteUser(id);
   }
 
+  @PostMapping("/{id}/photo")
+  public void upload(UpdateUserPhotoRequest request, @PathVariable Long id)
+      throws UserNotFoundException, IOException {
+    userService.updateUserProfilePicture(request.getFile(), id);
+  }
+
+  @GetMapping("/{id}/photo")
+  public ResponseEntity<byte[]> getUserProfilePhoto(@PathVariable Long id)
+      throws UserNotFoundException {
+    return ResponseEntity.ok(userService.getUserProfilePhoto(id));
+  }
+
+  @PostMapping("/{id}/cv")
+  public void upload(UpdateUserCvRequest request, @PathVariable Long id)
+      throws UserNotFoundException, IOException {
+    userService.updateUserCv(request.getFile(), id);
+  }
+
+  @GetMapping("/{id}/cv")
+  public ResponseEntity<byte[]> getUserCv(@PathVariable Long id) throws UserNotFoundException {
+    return ResponseEntity.ok().header(id + "_cv")
+        .contentType(MediaType.APPLICATION_PDF).body(userService.getUserCv(id));
+  }
+
+  @GetMapping("/{id}/applications")
+  public ResponseEntity<UserApplicationsResponse> getUserApplications(@PathVariable Long id)
+      throws UserNotFoundException {
+    return ResponseEntity.ok(userService.getAppliedAdverts(id));
+  }
 }

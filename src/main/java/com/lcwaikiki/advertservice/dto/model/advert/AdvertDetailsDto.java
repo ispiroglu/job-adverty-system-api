@@ -1,4 +1,4 @@
-package com.lcwaikiki.advertservice.dto;
+package com.lcwaikiki.advertservice.dto.model.advert;
 
 import java.util.Date;
 import javax.validation.constraints.NotEmpty;
@@ -44,9 +44,6 @@ public class AdvertDetailsDto {
   private boolean isActive;
   @NotNull
   @NotEmpty
-  private String photoUrl;
-  @NotNull
-  @NotEmpty
   private String companyName;
   @NotNull
   @NotEmpty
@@ -55,7 +52,7 @@ public class AdvertDetailsDto {
 
   public AdvertDetailsDto(Long id, String name, String summary, Date startDate, Date endDate,
       String position, int capacity, String district, String province, int provinceID,
-      String jobDefinition, boolean isActive, String photoUrl, String companyName,
+      String jobDefinition, boolean isActive, String companyName,
       String department) {
     this.id = id;
     this.name = name;
@@ -69,7 +66,6 @@ public class AdvertDetailsDto {
     this.provinceID = provinceID;
     this.jobDefinition = jobDefinition;
     this.isActive = isActive;
-    this.photoUrl = photoUrl;
     this.companyName = companyName;
     this.department = department;
   }
@@ -122,9 +118,6 @@ public class AdvertDetailsDto {
     return isActive;
   }
 
-  public String getPhotoUrl() {
-    return photoUrl;
-  }
 
   public String getCompanyName() {
     return companyName;

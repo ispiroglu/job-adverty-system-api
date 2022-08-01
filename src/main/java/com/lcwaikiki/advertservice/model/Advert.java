@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -43,8 +44,8 @@ public class Advert {
   private String jobDefinition;
   @Column
   private boolean active;
-  @Column
-  private String photoUrl;
+  @Lob
+  private byte[] photo;
   @Column
   private String companyName;
   @Column
@@ -60,7 +61,7 @@ public class Advert {
 
   public Advert(Long id, String name, String summary, Date startDate, Date endDate,
       String position, int capacity, String district, String province, int provinceID,
-      String jobDefinition, boolean active, String photoUrl, String companyName,
+      String jobDefinition, boolean active, byte[] photo, String companyName,
       String department, LocalDateTime creationDate, LocalDateTime update,
       Set<ApplicationDetail> applications) {
     this.id = id;
@@ -75,7 +76,7 @@ public class Advert {
     this.provinceID = provinceID;
     this.jobDefinition = jobDefinition;
     this.active = active;
-    this.photoUrl = photoUrl;
+    this.photo = photo;
     this.companyName = companyName;
     this.department = department;
     this.creationDate = creationDate;
@@ -89,7 +90,7 @@ public class Advert {
 
   public Advert(String name, String summary, Date startDate, Date endDate, String position,
       int capacity, String district, String province, int provinceID, String jobDefinition,
-      boolean active, String photoUrl, String companyName, String department) {
+      boolean active, byte[] photo, String companyName, String department) {
     this.name = name;
     this.summary = summary;
     this.startDate = startDate;
@@ -101,7 +102,25 @@ public class Advert {
     this.provinceID = provinceID;
     this.jobDefinition = jobDefinition;
     this.active = active;
-    this.photoUrl = photoUrl;
+    this.photo = photo;
+    this.companyName = companyName;
+    this.department = department;
+  }
+
+  public Advert(String name, String summary, Date startDate, Date endDate, String position,
+      int capacity, String district, String province, int provinceID,
+      String jobDefinition, boolean active, String companyName, String department) {
+    this.name = name;
+    this.summary = summary;
+    this.startDate = startDate;
+    this.endDate = endDate;
+    this.position = position;
+    this.capacity = capacity;
+    this.district = district;
+    this.province = province;
+    this.provinceID = provinceID;
+    this.jobDefinition = jobDefinition;
+    this.active = active;
     this.companyName = companyName;
     this.department = department;
   }
@@ -202,12 +221,12 @@ public class Advert {
     this.active = active;
   }
 
-  public String getPhotoUrl() {
-    return photoUrl;
+  public byte[] getPhoto() {
+    return photo;
   }
 
-  public void setPhotoUrl(String photoUrl) {
-    this.photoUrl = photoUrl;
+  public void setPhoto(byte[] photoUrl) {
+    this.photo = photoUrl;
   }
 
   public String getCompanyName() {
@@ -274,7 +293,7 @@ public class Advert {
         && summary.equals(advert.summary) && startDate.equals(advert.startDate)
         && endDate.equals(advert.endDate) && position.equals(advert.position)
         && district.equals(advert.district) && province.equals(advert.province)
-        && jobDefinition.equals(advert.jobDefinition) && photoUrl.equals(advert.photoUrl)
+        && jobDefinition.equals(advert.jobDefinition) && photo.equals(advert.photo)
         && companyName.equals(advert.companyName) && department.equals(advert.department)
         && applications.equals(advert.applications);
   }
@@ -282,7 +301,7 @@ public class Advert {
   @Override
   public int hashCode() {
     return Objects.hash(id, name, summary, startDate, endDate, position, capacity, district,
-        province, provinceID, jobDefinition, active, photoUrl, companyName, department,
+        province, provinceID, jobDefinition, active, photo, companyName, department,
         applications);
   }
 
@@ -301,7 +320,7 @@ public class Advert {
         ", provinceID=" + provinceID +
         ", jobDefinition='" + jobDefinition + '\'' +
         ", isActive=" + active +
-        ", photoUrl='" + photoUrl + '\'' +
+        ", photoUrl='" + photo + '\'' +
         ", companyName='" + companyName + '\'' +
         ", department='" + department + '\'' +
         ", applicants=" + applications +

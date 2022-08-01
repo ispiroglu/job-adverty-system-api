@@ -1,4 +1,4 @@
-package com.lcwaikiki.advertservice.dto;
+package com.lcwaikiki.advertservice.dto.model.user;
 
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;

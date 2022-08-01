@@ -1,18 +1,24 @@
 package com.lcwaikiki.advertservice.controller;
 
-import com.lcwaikiki.advertservice.dto.AddApplicantRequest;
-import com.lcwaikiki.advertservice.dto.AdvertDetailsDto;
-import com.lcwaikiki.advertservice.dto.CreateAdvertRequest;
-import com.lcwaikiki.advertservice.dto.GetFilteredAdvertsRequest;
-import com.lcwaikiki.advertservice.dto.UpdateAdvertRequest;
+import com.lcwaikiki.advertservice.dto.model.advert.AdvertDetailsDto;
+import com.lcwaikiki.advertservice.dto.request.advert.AddApplicantRequest;
+import com.lcwaikiki.advertservice.dto.request.advert.CreateAdvertRequest;
+import com.lcwaikiki.advertservice.dto.request.advert.GetFilteredAdvertsRequest;
+import com.lcwaikiki.advertservice.dto.request.advert.UpdateAdvertPhotoRequest;
+import com.lcwaikiki.advertservice.dto.request.advert.UpdateAdvertRequest;
+import com.lcwaikiki.advertservice.dto.request.applicationdetail.UpdateApplicationStatusRequest;
+import com.lcwaikiki.advertservice.exception.AdvertIsFullException;
 import com.lcwaikiki.advertservice.exception.AdvertNotFoundException;
 import com.lcwaikiki.advertservice.exception.UserNotFoundException;
+import com.lcwaikiki.advertservice.exception.UserNotValidForApplicationException;
 import com.lcwaikiki.advertservice.model.Advert;
 import com.lcwaikiki.advertservice.service.AdvertService;
 import com.lcwaikiki.advertservice.service.OperationHandlerService;
+import java.io.IOException;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -73,11 +79,31 @@ public class AdvertController {
     return advertService.findFilteredAdverts(request);
   }
 
-  @PutMapping("/{id}")
+  @PutMapping("/{id}/applications")
   public void addUserToAdvert(AddApplicantRequest request, @PathVariable Long id)
-      throws UserNotFoundException, AdvertNotFoundException {
-    System.out.println(id);
-    System.out.println("-----------------------------------------------------------------");
-    operationHandlerService.addApplicantToAdvert(request.getUserId(), id);
+      throws UserNotFoundException, AdvertNotFoundException, UserNotValidForApplicationException, AdvertIsFullException {
+    operationHandlerService.addApplicantToAdvert(id, request.getUserId());
+  }
+
+  @PostMapping("/{id}/applications")
+  public void updateApplicationStatus(UpdateApplicationStatusRequest request,
+      @PathVariable Long id) throws UserNotFoundException, AdvertNotFoundException {
+    operationHandlerService.updateApplicationStatus(id, request.getUserId(),
+        request.getNewStatus());
+  }
+
+  @PostMapping("/{id}/photo")
+  public void updateAdvertPhoto(UpdateAdvertPhotoRequest request, @PathVariable Long id)
+      throws IOException, AdvertNotFoundException {
+    System.out.println("Allah var");
+    System.out.println(request);
+    advertService.updateAdvertPhoto(request.getFile(), id);
+  }
+
+  @GetMapping("/{id}/photo")
+  public ResponseEntity<byte[]> getAdvertPhoto(@PathVariable Long id)
+      throws AdvertNotFoundException {
+    return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG)
+        .body(advertService.getAdvertPhoto(id));
   }
 }

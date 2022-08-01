@@ -1,10 +1,13 @@
 package com.lcwaikiki.advertservice.dto.converter;
 
-import com.lcwaikiki.advertservice.dto.AdvertDetailsDto;
-import com.lcwaikiki.advertservice.dto.CreateAdvertRequest;
-import com.lcwaikiki.advertservice.dto.GetFilteredAdvertsRequest;
-import com.lcwaikiki.advertservice.dto.UpdateAdvertRequest;
+import com.lcwaikiki.advertservice.dto.model.advert.AdvertDetailsDto;
+import com.lcwaikiki.advertservice.dto.model.advert.AdvertInfo;
+import com.lcwaikiki.advertservice.dto.request.advert.CreateAdvertRequest;
+import com.lcwaikiki.advertservice.dto.request.advert.GetFilteredAdvertsRequest;
+import com.lcwaikiki.advertservice.dto.request.advert.UpdateAdvertRequest;
+import com.lcwaikiki.advertservice.dto.response.advert.FilteredAdvertResponse;
 import com.lcwaikiki.advertservice.model.Advert;
+import com.lcwaikiki.advertservice.model.ApplicationStatus;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,7 +19,7 @@ public class AdvertDtoConverter {
         advert.getStartDate(), advert.getEndDate(), advert.getPosition(),
         advert.getCapacity(), advert.getDistrict(), advert.getProvince(),
         advert.getProvinceID(), advert.getJobDefinition(), advert.isActive(),
-        advert.getPhotoUrl(), advert.getCompanyName(), advert.getDepartment()
+        advert.getCompanyName(), advert.getDepartment()
     );
   }
 
@@ -29,7 +32,7 @@ public class AdvertDtoConverter {
         createAdvertRequest.getProvince(),
         createAdvertRequest.getProvinceID(), createAdvertRequest.getJobDefinition(),
         true,
-        createAdvertRequest.getPhotoUrl(), createAdvertRequest.getCompanyName(),
+        createAdvertRequest.getPhoto(), createAdvertRequest.getCompanyName(),
         createAdvertRequest.getDepartment());
   }
 
@@ -42,7 +45,8 @@ public class AdvertDtoConverter {
         updateAdvertRequest.getProvince(),
         updateAdvertRequest.getProvinceID(), updateAdvertRequest.getJobDefinition(),
         updateAdvertRequest.isActive(),
-        updateAdvertRequest.getPhotoUrl(), updateAdvertRequest.getCompanyName(),
+//        updateAdvertRequest.getPhoto(),
+        updateAdvertRequest.getCompanyName(),
         updateAdvertRequest.getDepartment());
   }
 
@@ -53,5 +57,21 @@ public class AdvertDtoConverter {
     advert.setPosition(request.getPosition());
 
     return advert;
+  }
+
+  public FilteredAdvertResponse convertToFilteredAdvertResponse(Advert advert) {
+    return new FilteredAdvertResponse(
+        advert.getId(), advert.getName(), advert.getSummary(), advert.getStartDate(),
+        advert.getEndDate(),
+        advert.getPosition(), advert.getCapacity(), advert.getDistrict(), advert.getProvince(),
+        advert.getProvinceID(), advert.getJobDefinition(), advert.isActive(), advert.getPhoto(),
+        advert.getCompanyName(), advert.getDepartment(), advert.getApplications());
+  }
+
+  public AdvertInfo convertToAdvertInfo(Advert advert, ApplicationStatus status) {
+    return new AdvertInfo(
+        advert.getName(), advert.getPosition(), advert.getSummary(),
+        advert.getDistrict() + "/" + advert.getProvince(), status
+    );
   }
 }

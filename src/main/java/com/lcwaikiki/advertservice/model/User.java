@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
@@ -48,14 +49,19 @@ public class User {
   }
 
   @OneToMany(mappedBy = "user")
-//  @JsonManagedReference
   @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
   private Set<ApplicationDetail> applications;
+
+  @Lob
+  private byte[] profilePhoto;
+
+  @Lob
+  private byte[] cv;
 
   public User(Long id, String firstname, String lastname, String gender, String email,
       String password, String phoneNumber, String province, int provinceID, String district,
       int experience, String aboutUser, boolean isEmployer, LocalDateTime creationDate,
-      LocalDateTime update, Set<ApplicationDetail> applications) {
+      LocalDateTime update, Set<ApplicationDetail> applications, byte[] profilePhoto, byte[] cv) {
     this.id = id;
     this.firstname = firstname;
     this.lastname = lastname;
@@ -72,6 +78,8 @@ public class User {
     this.creationDate = creationDate;
     this.update = update;
     this.applications = applications;
+    this.profilePhoto = profilePhoto;
+    this.cv = cv;
   }
 
   public User(boolean isEmployer, String email, String password) {
@@ -180,15 +188,6 @@ public class User {
     this.aboutUser = aboutUser;
   }
 
-//  public List<ApplicationDetail> getApplicationDetails() {
-//    return applicationDetails;
-//  }
-//
-//  public void setApplicationDetails(List<ApplicationDetail> applicationDetails) {
-//    this.applicationDetails = applicationDetails;
-//  }
-
-
   public Set<ApplicationDetail> getApplications() {
     return applications;
   }
@@ -237,4 +236,19 @@ public class User {
     applications.add(application);
   }
 
+  public byte[] getProfilePhoto() {
+    return profilePhoto;
+  }
+
+  public void setProfilePhoto(byte[] profilePhoto) {
+    this.profilePhoto = profilePhoto;
+  }
+
+  public byte[] getCv() {
+    return cv;
+  }
+
+  public void setCv(byte[] cv) {
+    this.cv = cv;
+  }
 }

@@ -1,56 +1,42 @@
-package com.lcwaikiki.advertservice.dto;
+package com.lcwaikiki.advertservice.dto.request.advert;
 
 import java.util.Date;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+
+public class UpdateAdvertRequest {
 
 
-public class CreateAdvertRequest {
-
-  @NotNull
-  @NotEmpty
   private String name;
-  @NotNull
-  @NotEmpty
+
   private String summary;
-  @NotNull
-  @NotEmpty
+
   private Date startDate;
-  @NotNull
-  @NotEmpty
+
   private Date endDate;
-  @NotNull
-  @NotEmpty
+
   private String position;
-  @NotNull
-  @NotEmpty
+
   private int capacity;
-  @NotNull
-  @NotEmpty
+
   private String district;
-  @NotNull
-  @NotEmpty
+
   private String province;
-  @NotNull
-  @NotEmpty
+
   private int provinceID;
-  @NotNull
-  @NotEmpty
+
   private String jobDefinition;
-  @NotNull
-  @NotEmpty
-  private String photoUrl;
-  @NotNull
-  @NotEmpty
+
+  private boolean active;
+
+//  private byte[] photo;
+
   private String companyName;
-  @NotNull
-  @NotEmpty
+
   private String department;
 
 
-  public CreateAdvertRequest(String name, String summary, Date startDate, Date endDate,
+  public UpdateAdvertRequest(String name, String summary, Date startDate, Date endDate,
       String position, int capacity, String district, String province, int provinceID,
-      String jobDefinition, String photoUrl, String companyName,
+      String jobDefinition, boolean active, String companyName,
       String department) {
     this.name = name;
     this.summary = summary;
@@ -62,11 +48,11 @@ public class CreateAdvertRequest {
     this.province = province;
     this.provinceID = provinceID;
     this.jobDefinition = jobDefinition;
-    this.photoUrl = photoUrl;
+    this.active = active;
+//    this.photo = photo;
     this.companyName = companyName;
     this.department = department;
   }
-
 
   public String getName() {
     return name;
@@ -108,9 +94,8 @@ public class CreateAdvertRequest {
     return jobDefinition;
   }
 
-
-  public String getPhotoUrl() {
-    return photoUrl;
+  public boolean isActive() {
+    return active;
   }
 
   public String getCompanyName() {
@@ -120,4 +105,8 @@ public class CreateAdvertRequest {
   public String getDepartment() {
     return department;
   }
+
+//  public byte[] getPhoto() {
+//    return photo;
+//  }
 }

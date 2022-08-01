@@ -1,4 +1,4 @@
-package com.lcwaikiki.advertservice.dto;
+package com.lcwaikiki.advertservice.dto.request.advert;
 
 public class AddApplicantRequest {
 

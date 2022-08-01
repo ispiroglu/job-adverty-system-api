@@ -1,17 +1,19 @@
 package com.lcwaikiki.advertservice.service;
 
-import com.lcwaikiki.advertservice.dto.AdvertDetailsDto;
-import com.lcwaikiki.advertservice.dto.CreateAdvertRequest;
-import com.lcwaikiki.advertservice.dto.GetFilteredAdvertsRequest;
-import com.lcwaikiki.advertservice.dto.UpdateAdvertRequest;
 import com.lcwaikiki.advertservice.dto.converter.AdvertDtoConverter;
+import com.lcwaikiki.advertservice.dto.model.advert.AdvertDetailsDto;
+import com.lcwaikiki.advertservice.dto.request.advert.CreateAdvertRequest;
+import com.lcwaikiki.advertservice.dto.request.advert.GetFilteredAdvertsRequest;
+import com.lcwaikiki.advertservice.dto.request.advert.UpdateAdvertRequest;
 import com.lcwaikiki.advertservice.exception.AdvertNotFoundException;
 import com.lcwaikiki.advertservice.model.Advert;
 import com.lcwaikiki.advertservice.model.ApplicationDetail;
 import com.lcwaikiki.advertservice.repository.AdvertRepository;
+import java.io.IOException;
 import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
@@ -72,7 +74,6 @@ public class AdvertService {
 
   public void addUserToAdvert(Advert advert, ApplicationDetail application) {
     advert.addApplication(application);
-    System.out.println(advert);
     advertRepository.save(advert);
   }
 
@@ -82,5 +83,16 @@ public class AdvertService {
 
   public Advert findById(long id) throws AdvertNotFoundException {
     return advertRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
+  }
+
+  public void updateAdvertPhoto(MultipartFile file, Long id)
+      throws AdvertNotFoundException, IOException {
+    Advert advert = findById(id);
+    advert.setPhoto(file.getBytes());
+    advertRepository.save(advert);
+  }
+
+  public byte[] getAdvertPhoto(Long id) throws AdvertNotFoundException {
+    return findById(id).getPhoto();
   }
 }

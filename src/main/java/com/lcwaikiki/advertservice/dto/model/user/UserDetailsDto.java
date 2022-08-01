@@ -1,4 +1,4 @@
-package com.lcwaikiki.advertservice.dto;
+package com.lcwaikiki.advertservice.dto.model.user;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;

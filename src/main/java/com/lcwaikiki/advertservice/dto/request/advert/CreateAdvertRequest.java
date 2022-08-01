@@ -1,42 +1,56 @@
-package com.lcwaikiki.advertservice.dto;
+package com.lcwaikiki.advertservice.dto.request.advert;
 
 import java.util.Date;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
-public class UpdateAdvertRequest {
 
+public class CreateAdvertRequest {
 
+  @NotNull
+  @NotEmpty
   private String name;
-
+  @NotNull
+  @NotEmpty
   private String summary;
-
+  @NotNull
+  @NotEmpty
   private Date startDate;
-
+  @NotNull
+  @NotEmpty
   private Date endDate;
-
+  @NotNull
+  @NotEmpty
   private String position;
-
+  @NotNull
+  @NotEmpty
   private int capacity;
-
+  @NotNull
+  @NotEmpty
   private String district;
-
+  @NotNull
+  @NotEmpty
   private String province;
-
+  @NotNull
+  @NotEmpty
   private int provinceID;
-
+  @NotNull
+  @NotEmpty
   private String jobDefinition;
-
-  private boolean active;
-
-  private String photoUrl;
-
+  @NotNull
+  @NotEmpty
+  private byte[] photo;
+  @NotNull
+  @NotEmpty
   private String companyName;
-
+  @NotNull
+  @NotEmpty
   private String department;
 
 
-  public UpdateAdvertRequest(String name, String summary, Date startDate, Date endDate,
+  public CreateAdvertRequest(String name, String summary, Date startDate, Date endDate,
       String position, int capacity, String district, String province, int provinceID,
-      String jobDefinition, boolean active, String photoUrl, String companyName,
+      String jobDefinition, byte[] photo, String companyName,
       String department) {
     this.name = name;
     this.summary = summary;
@@ -48,11 +62,11 @@ public class UpdateAdvertRequest {
     this.province = province;
     this.provinceID = provinceID;
     this.jobDefinition = jobDefinition;
-    this.active = active;
-    this.photoUrl = photoUrl;
+    this.photo = photo;
     this.companyName = companyName;
     this.department = department;
   }
+
 
   public String getName() {
     return name;
@@ -94,12 +108,9 @@ public class UpdateAdvertRequest {
     return jobDefinition;
   }
 
-  public boolean isActive() {
-    return active;
-  }
 
-  public String getPhotoUrl() {
-    return photoUrl;
+  public byte[] getPhoto() {
+    return photo;
   }
 
   public String getCompanyName() {
