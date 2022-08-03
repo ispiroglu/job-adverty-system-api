@@ -8,18 +8,21 @@ public class UpdateUserRequest {
   private String email;
   private String phoneNumber;
   private String province;
+  private int provinceID;
   private String district;
   private int experience;
   private String aboutUser;
 
   public UpdateUserRequest(String firstname, String lastname, String gender, String email,
-      String phoneNumber, String province, String district, int experience, String aboutUser) {
+      String phoneNumber, String province, int provinceID, String district, int experience,
+      String aboutUser) {
     this.firstname = firstname;
     this.lastname = lastname;
     this.gender = gender;
     this.email = email;
     this.phoneNumber = phoneNumber;
     this.province = province;
+    this.provinceID = provinceID;
     this.district = district;
     this.experience = experience;
     this.aboutUser = aboutUser;
@@ -95,5 +98,28 @@ public class UpdateUserRequest {
 
   public String getAboutUser() {
     return aboutUser;
+  }
+
+  @Override
+  public String toString() {
+    return "UpdateUserRequest{" +
+        "firstname='" + firstname + '\'' +
+        ", lastname='" + lastname + '\'' +
+        ", gender='" + gender + '\'' +
+        ", email='" + email + '\'' +
+        ", phoneNumber='" + phoneNumber + '\'' +
+        ", province='" + province + '\'' +
+        ", district='" + district + '\'' +
+        ", experience=" + experience +
+        ", aboutUser='" + aboutUser + '\'' +
+        '}';
+  }
+
+  public int getProvinceID() {
+    return provinceID;
+  }
+
+  public void setProvinceID(int provinceID) {
+    this.provinceID = provinceID;
   }
 }

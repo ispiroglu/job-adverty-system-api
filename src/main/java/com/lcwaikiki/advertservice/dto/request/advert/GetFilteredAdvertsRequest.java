@@ -30,4 +30,14 @@ public class GetFilteredAdvertsRequest {
   public String getProvince() {
     return province;
   }
+
+  @Override
+  public String toString() {
+    return "GetFilteredAdvertsRequest{" +
+        "searchText='" + searchText + '\'' +
+        ", department='" + department + '\'' +
+        ", position='" + position + '\'' +
+        ", province='" + province + '\'' +
+        '}';
+  }
 }

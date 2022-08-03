@@ -1,8 +1,8 @@
-package com.lcwaikiki.advertservice.dto.model.advert;
+package com.lcwaikiki.advertservice.dto.response.user;
 
 import com.lcwaikiki.advertservice.model.ApplicationStatus;
 
-public class AdvertInfo {
+public class UserApplicationTableAdvertInfo {
 
   private String name;
   private String position;
@@ -10,7 +10,8 @@ public class AdvertInfo {
   private String location;
   private ApplicationStatus status;
 
-  public AdvertInfo(String name, String position, String summary, String location,
+  public UserApplicationTableAdvertInfo(String name, String position, String summary,
+      String location,
       ApplicationStatus status) {
     this.name = name;
     this.position = position;

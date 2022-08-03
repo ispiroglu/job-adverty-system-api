@@ -1,7 +1,5 @@
 package com.lcwaikiki.advertservice.dto.request.advert;
 
-import java.util.Date;
-
 public class UpdateAdvertRequest {
 
 
@@ -9,9 +7,9 @@ public class UpdateAdvertRequest {
 
   private String summary;
 
-  private Date startDate;
+  private String startDate;
 
-  private Date endDate;
+  private String endDate;
 
   private String position;
 
@@ -33,11 +31,30 @@ public class UpdateAdvertRequest {
 
   private String department;
 
+//  public UpdateAdvertRequest(String name, String summary, Date startDate, Date endDate,
+//      String position, int capacity, String district, String province, int provinceID,
+//      String jobDefinition, boolean active, String companyName,
+//      String department) {
+//    this.name = name;
+//    this.summary = summary;
+//    this.startDate = startDate;
+//    this.endDate = endDate;
+//    this.position = position;
+//    this.capacity = capacity;
+//    this.district = district;
+//    this.province = province;
+//    this.provinceID = provinceID;
+//    this.jobDefinition = jobDefinition;
+//    this.active = active;
+////    this.photo = photo;
+//    this.companyName = companyName;
+//    this.department = department;
+//  }
 
-  public UpdateAdvertRequest(String name, String summary, Date startDate, Date endDate,
+
+  public UpdateAdvertRequest(String name, String summary, String startDate, String endDate,
       String position, int capacity, String district, String province, int provinceID,
-      String jobDefinition, boolean active, String companyName,
-      String department) {
+      String jobDefinition, boolean active, String companyName, String department) {
     this.name = name;
     this.summary = summary;
     this.startDate = startDate;
@@ -49,7 +66,6 @@ public class UpdateAdvertRequest {
     this.provinceID = provinceID;
     this.jobDefinition = jobDefinition;
     this.active = active;
-//    this.photo = photo;
     this.companyName = companyName;
     this.department = department;
   }
@@ -62,11 +78,20 @@ public class UpdateAdvertRequest {
     return summary;
   }
 
-  public Date getStartDate() {
+//  public Date getStartDate() {
+//    return startDate;
+//  }
+
+//  public Date getEndDate() {
+//    return endDate;
+//  }
+
+
+  public String getStartDate() {
     return startDate;
   }
 
-  public Date getEndDate() {
+  public String getEndDate() {
     return endDate;
   }
 
@@ -109,4 +134,24 @@ public class UpdateAdvertRequest {
 //  public byte[] getPhoto() {
 //    return photo;
 //  }
+
+
+  @Override
+  public String toString() {
+    return "UpdateAdvertRequest{" +
+        "name='" + name + '\'' +
+        ", summary='" + summary + '\'' +
+        ", startDate=" + startDate +
+        ", endDate=" + endDate +
+        ", position='" + position + '\'' +
+        ", capacity=" + capacity +
+        ", district='" + district + '\'' +
+        ", province='" + province + '\'' +
+        ", provinceID=" + provinceID +
+        ", jobDefinition='" + jobDefinition + '\'' +
+        ", active=" + active +
+        ", companyName='" + companyName + '\'' +
+        ", department='" + department + '\'' +
+        '}';
+  }
 }

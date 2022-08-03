@@ -18,4 +18,5 @@ public class UpdateAdvertPhotoRequest {
     this.file = file;
   }
 
+
 }

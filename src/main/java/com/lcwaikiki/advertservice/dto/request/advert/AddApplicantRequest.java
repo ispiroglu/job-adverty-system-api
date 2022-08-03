@@ -16,4 +16,11 @@ public class AddApplicantRequest {
   public void setUserId(Long userId) {
     this.userId = userId;
   }
+
+  @Override
+  public String toString() {
+    return "AddApplicantRequest{" +
+        "userId=" + userId +
+        '}';
+  }
 }

@@ -1,7 +1,9 @@
 package com.lcwaikiki.advertservice.service;
 
+import com.lcwaikiki.advertservice.dto.response.advert.DashboardInfoResponse;
 import com.lcwaikiki.advertservice.exception.AdvertIsFullException;
 import com.lcwaikiki.advertservice.exception.AdvertNotFoundException;
+import com.lcwaikiki.advertservice.exception.UserAlreadyAppliedException;
 import com.lcwaikiki.advertservice.exception.UserNotFoundException;
 import com.lcwaikiki.advertservice.exception.UserNotValidForApplicationException;
 import com.lcwaikiki.advertservice.model.Advert;
@@ -28,22 +30,34 @@ public class OperationHandlerService {
   }
 
   public void addApplicantToAdvert(Long advertId, Long userId)
-      throws UserNotFoundException, AdvertNotFoundException, UserNotValidForApplicationException, AdvertIsFullException {
+      throws UserNotFoundException, AdvertNotFoundException, UserNotValidForApplicationException, AdvertIsFullException, UserAlreadyAppliedException {
+    System.out.println(advertId + "Advert");
+    System.out.println(userId + "User");
     User user = userService.findById(userId);
 
-    if (!UserValidationUtil.isValidForApplication(user))
+    if (!UserValidationUtil.isValidForApplication(user)) {
       throw new UserNotValidForApplicationException();
+    }
 
     Advert advert = advertService.findById(advertId);
-    if (!AdvertValidationUtil.isAdvertCapacityFull(advert))
+    if (!AdvertValidationUtil.isAdvertCapacityFull(advert)) {
       throw new AdvertIsFullException();
+    }
+    System.out.println("Advert Before Apply");
+    System.out.println(advert);
 
+    if (applicationDetailRepository.getApplicationDetailByAdvertAndUser(advert, user) != null)
+      throw new UserAlreadyAppliedException();
+
+    System.out.println("LOl");
     ApplicationDetail application = new ApplicationDetail(
         advert, user
     );
 
     userService.addApplicationToUser(user, application);
     advertService.addUserToAdvert(advert, application);
+    System.out.println("After");
+    System.out.println(advert);
     applicationDetailRepository.save(application);
   }
 
@@ -54,6 +68,15 @@ public class OperationHandlerService {
     );
 
     application.setStatus(newStatus);
+    application.setDecided(true);
     applicationDetailRepository.save(application);
+  }
+
+  public DashboardInfoResponse getDashboardInfoDto() {
+    return new DashboardInfoResponse(
+        advertService.getAdvertCount(),
+        userService.getUserCount(),
+        1L, advertService.getEndingAdverts(), advertService.getStartingAdverts()
+    );
   }
 }

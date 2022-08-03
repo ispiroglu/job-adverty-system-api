@@ -3,11 +3,14 @@ package com.lcwaikiki.advertservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import java.sql.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 public class ApplicationDetail {
@@ -31,11 +34,20 @@ public class ApplicationDetail {
 
   private ApplicationStatus status;
 
+  private boolean decided;
+
+  @CreationTimestamp
+  private Date applicationDate;
+
+  @UpdateTimestamp
+  private Date updateDate;
+
   public ApplicationDetail(Advert advert, User user) {
     this.advert = advert;
     this.user = user;
     status = ApplicationStatus.PENDING;
   }
+
 
   public ApplicationDetail() {
   }
@@ -67,5 +79,33 @@ public class ApplicationDetail {
 
   public Long getId() {
     return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public boolean isDecided() {
+    return decided;
+  }
+
+  public void setDecided(boolean decided) {
+    this.decided = decided;
+  }
+
+  public Date getApplicationDate() {
+    return applicationDate;
+  }
+
+  public void setApplicationDate(Date applicationDate) {
+    this.applicationDate = applicationDate;
+  }
+
+  public Date getUpdateDate() {
+    return updateDate;
+  }
+
+  public void setUpdateDate(Date updateDate) {
+    this.updateDate = updateDate;
   }
 }

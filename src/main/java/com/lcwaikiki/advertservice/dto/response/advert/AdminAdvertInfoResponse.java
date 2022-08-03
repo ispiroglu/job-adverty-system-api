@@ -1,59 +1,26 @@
-package com.lcwaikiki.advertservice.dto.request.advert;
+package com.lcwaikiki.advertservice.dto.response.advert;
 
-import java.util.Date;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+public class AdminAdvertInfoResponse {
 
-
-public class CreateAdvertRequest {
-
-  @NotNull
-  @NotEmpty
+  private Long id;
   private String name;
-  @NotNull
-  @NotEmpty
   private String summary;
-  @NotNull
-  @NotEmpty
-  private Date startDate;
-  @NotNull
-  @NotEmpty
-  private Date endDate;
-  @NotNull
-  @NotEmpty
+  private String startDate;
+  private String endDate;
   private String position;
-  @NotNull
-  @NotEmpty
   private int capacity;
-  @NotNull
-  @NotEmpty
   private String district;
-  @NotNull
-  @NotEmpty
   private String province;
-  @NotNull
-  @NotEmpty
   private int provinceID;
-  @NotNull
-  @NotEmpty
   private String jobDefinition;
-  //  @NotNull
-//  @NotEmpty
-//  private byte[] photo;
-  @NotNull
-  @NotEmpty
-  private String companyName;
-  @NotNull
-  @NotEmpty
+  private boolean isOpen;
   private String department;
+  private String companyName;
 
-
-  public CreateAdvertRequest(String name, String summary, Date startDate, Date endDate,
-      String position, int capacity, String district, String province, int provinceID,
-      String jobDefinition,
-//      byte[] photo,
-      String companyName,
-      String department) {
+  public AdminAdvertInfoResponse(Long id, String name, String summary, String startDate,
+      String endDate, String position, int capacity, String district, String province,
+      int provinceID, String jobDefinition, boolean isOpen, String companyName, String department) {
+    this.id = id;
     this.name = name;
     this.summary = summary;
     this.startDate = startDate;
@@ -64,11 +31,14 @@ public class CreateAdvertRequest {
     this.province = province;
     this.provinceID = provinceID;
     this.jobDefinition = jobDefinition;
-//    this.photo = photo;
-    this.companyName = companyName;
+    this.isOpen = isOpen;
     this.department = department;
+    this.companyName = companyName;
   }
 
+  public Long getId() {
+    return id;
+  }
 
   public String getName() {
     return name;
@@ -78,11 +48,11 @@ public class CreateAdvertRequest {
     return summary;
   }
 
-  public Date getStartDate() {
+  public String getStartDate() {
     return startDate;
   }
 
-  public Date getEndDate() {
+  public String getEndDate() {
     return endDate;
   }
 
@@ -110,15 +80,19 @@ public class CreateAdvertRequest {
     return jobDefinition;
   }
 
-//  public byte[] getPhoto() {
-//    return photo;
-//  }
-
-  public String getCompanyName() {
-    return companyName;
+  public boolean getIsOpen() {
+    return isOpen;
   }
 
   public String getDepartment() {
     return department;
+  }
+
+  public boolean isOpen() {
+    return isOpen;
+  }
+
+  public String getCompanyName() {
+    return companyName;
   }
 }

@@ -5,13 +5,18 @@ import com.lcwaikiki.advertservice.dto.converter.UserDtoConverter;
 import com.lcwaikiki.advertservice.dto.model.user.UserCredentialDto;
 import com.lcwaikiki.advertservice.dto.request.user.CreateUserRequest;
 import com.lcwaikiki.advertservice.dto.request.user.UpdateUserRequest;
-import com.lcwaikiki.advertservice.dto.response.user.UserApplicationsResponse;
+import com.lcwaikiki.advertservice.dto.response.user.UserApplicationTableAdvertInfo;
+import com.lcwaikiki.advertservice.dto.response.user.UserDetailResponse;
 import com.lcwaikiki.advertservice.exception.UserNotFoundException;
 import com.lcwaikiki.advertservice.model.ApplicationDetail;
 import com.lcwaikiki.advertservice.model.User;
 import com.lcwaikiki.advertservice.repository.UserRepository;
 import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import javax.sql.rowset.serial.SerialBlob;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,6 +48,7 @@ public class UserService {
     user.setEmail(updateUserRequest.getEmail());
     user.setGender(updateUserRequest.getGender());
     user.setPhoneNumber(updateUserRequest.getPhoneNumber());
+    user.setProvinceID(updateUserRequest.getProvinceID());
     user.setProvince(updateUserRequest.getProvince());
     user.setDistrict(updateUserRequest.getDistrict());
     user.setExperience(updateUserRequest.getExperience());
@@ -71,6 +77,10 @@ public class UserService {
     return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
   }
 
+  public UserDetailResponse getUserDetail(Long id) throws UserNotFoundException {
+    return userDtoConverter.convertToUserDetailsDto(findById(id));
+  }
+
   public void updateUserProfilePicture(MultipartFile file, Long id)
       throws IOException, UserNotFoundException {
 
@@ -79,8 +89,8 @@ public class UserService {
     userRepository.save(user);
   }
 
-  public byte[] getUserProfilePhoto(Long id) throws UserNotFoundException {
-    return findById(id).getProfilePhoto();
+  public Blob getUserProfilePhoto(Long id) throws UserNotFoundException, SQLException {
+    return new SerialBlob(findById(id).getProfilePhoto());
   }
 
   public void updateUserCv(MultipartFile file, Long id) throws IOException, UserNotFoundException {
@@ -89,21 +99,24 @@ public class UserService {
     userRepository.save(user);
   }
 
-  public byte[] getUserCv(Long id) throws UserNotFoundException {
-    return findById(id).getCv();
+  public Blob getUserCv(Long id) throws UserNotFoundException, SQLException {
+    return new SerialBlob(findById(id).getCv());
   }
 
 
-  // TODO: Should return basic infos about adverts. CREATE appliedAdvertsResponse : DONE
-  public UserApplicationsResponse getAppliedAdverts(Long id) throws UserNotFoundException {
+  public List<UserApplicationTableAdvertInfo> getAppliedAdverts(Long id)
+      throws UserNotFoundException {
     User user = findById(id);
-    UserApplicationsResponse response = new UserApplicationsResponse();
+    List<UserApplicationTableAdvertInfo> list = new ArrayList<>();
 
     user.getApplications()
-        .forEach(applicationDetail -> response.addToAdvertInfos(
-            advertDtoConverter.convertToAdvertInfo(applicationDetail.getAdvert(),
-                applicationDetail.getStatus())
-        ));
-    return response;
+        .forEach(applicationDetail ->
+            list.add(advertDtoConverter.converToApplicationTableAdvertInfo(
+                applicationDetail.getAdvert(), applicationDetail.getStatus())));
+    return list;
+  }
+
+  public Long getUserCount() {
+    return userRepository.count();
   }
 }

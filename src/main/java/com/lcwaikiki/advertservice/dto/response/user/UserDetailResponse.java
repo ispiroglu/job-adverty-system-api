@@ -1,49 +1,52 @@
-package com.lcwaikiki.advertservice.dto.model.user;
+package com.lcwaikiki.advertservice.dto.response.user;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-public class UserDetailsDto {
+public class UserDetailResponse {
 
-  private String firstName;
-  private String lastName;
+  private String firstname;
+  private String lastname;
   private String gender;
   @NotNull(message = "email cannot be null")
   @NotEmpty(message = "email cannot be empty")
   private String email;
   private String phoneNumber;
   private String province;
+  private int provinceID;
   private String district;
   private int experience;
   private String aboutUser;
 
-  public UserDetailsDto(String firstName, String lastName, String gender, String email,
-      String phoneNumber, String province, String district, int experience, String aboutUser) {
-    this.firstName = firstName;
-    this.lastName = lastName;
+  public UserDetailResponse(String firstname, String lastname, String gender, String email,
+      String phoneNumber, String province, int provinceID, String district, int experience,
+      String aboutUser) {
+    this.firstname = firstname;
+    this.lastname = lastname;
     this.gender = gender;
     this.email = email;
     this.phoneNumber = phoneNumber;
     this.province = province;
+    this.provinceID = provinceID;
     this.district = district;
     this.experience = experience;
     this.aboutUser = aboutUser;
   }
 
-  public String getFirstName() {
-    return firstName;
+  public String getFirstname() {
+    return firstname;
   }
 
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
+  public void setFirstname(String firstname) {
+    this.firstname = firstname;
   }
 
-  public String getLastName() {
-    return lastName;
+  public String getLastname() {
+    return lastname;
   }
 
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
+  public void setLastname(String lastname) {
+    this.lastname = lastname;
   }
 
   public String getGender() {
@@ -100,5 +103,9 @@ public class UserDetailsDto {
 
   public void setAboutUser(String aboutUser) {
     this.aboutUser = aboutUser;
+  }
+
+  public int getProvinceID() {
+    return provinceID;
   }
 }

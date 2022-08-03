@@ -1,16 +1,26 @@
 package com.lcwaikiki.advertservice.service;
 
 import com.lcwaikiki.advertservice.dto.converter.AdvertDtoConverter;
+import com.lcwaikiki.advertservice.dto.converter.UserDtoConverter;
+import com.lcwaikiki.advertservice.dto.model.advert.AdvertCardInfoDto;
 import com.lcwaikiki.advertservice.dto.model.advert.AdvertDetailsDto;
+import com.lcwaikiki.advertservice.dto.model.advert.DashboardAdvertTableInfoDto;
 import com.lcwaikiki.advertservice.dto.request.advert.CreateAdvertRequest;
 import com.lcwaikiki.advertservice.dto.request.advert.GetFilteredAdvertsRequest;
 import com.lcwaikiki.advertservice.dto.request.advert.UpdateAdvertRequest;
+import com.lcwaikiki.advertservice.dto.response.advert.AdminAdvertInfoResponse;
+import com.lcwaikiki.advertservice.dto.response.user.AdvertAppliedUserInfoResponse;
 import com.lcwaikiki.advertservice.exception.AdvertNotFoundException;
 import com.lcwaikiki.advertservice.model.Advert;
 import com.lcwaikiki.advertservice.model.ApplicationDetail;
 import com.lcwaikiki.advertservice.repository.AdvertRepository;
 import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
+import javax.sql.rowset.serial.SerialBlob;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,13 +32,15 @@ public class AdvertService {
   private final AdvertRepository advertRepository;
   private final ModelMapper modelMapper;
   private final AdvertDtoConverter advertDtoConverter;
+  private final UserDtoConverter userDtoConverter;
 
   public AdvertService(AdvertRepository advertRepository,
       ModelMapper modelMapper,
-      AdvertDtoConverter advertDtoConverter) {
+      AdvertDtoConverter advertDtoConverter, UserDtoConverter userDtoConverter) {
     this.advertRepository = advertRepository;
     this.modelMapper = modelMapper;
     this.advertDtoConverter = advertDtoConverter;
+    this.userDtoConverter = userDtoConverter;
   }
 
   public AdvertDetailsDto createAdvert(CreateAdvertRequest createAdvertRequest) {
@@ -39,11 +51,14 @@ public class AdvertService {
   }
 
   public void updateAdvert(UpdateAdvertRequest updateAdvertRequest, Long id)
-      throws AdvertNotFoundException {
+      throws AdvertNotFoundException, ParseException {
     Advert advert = advertRepository.findById(id).orElseThrow(AdvertNotFoundException::new);
     Advert advertToSave = advertDtoConverter.convertToAdvert(updateAdvertRequest);
     advertToSave.setCreationDate(advert.getCreationDate());
     advertToSave.setId(advert.getId());
+    advertToSave.setUpdate(advert.getUpdate());
+    advertToSave.setActive(advert.isActive());
+    advertToSave.setPhoto(advert.getPhoto());
     advertRepository.save(advertToSave);
 //    advert.setName(updateAdvertRequest.getName());
 //    advert.setSummary( updateAdvertRequest.getSummary());
@@ -67,9 +82,17 @@ public class AdvertService {
     advertRepository.save(advert);
   }
 
-  public List<Advert> findFilteredAdverts(GetFilteredAdvertsRequest request) {
-    return advertRepository.findAdvertsByFullFilter(request.getProvince(), request.getPosition(),
-        request.getDepartment(), request.getSearchText());
+  public List<AdvertCardInfoDto> findFilteredAdverts(GetFilteredAdvertsRequest request) {
+    List<AdvertCardInfoDto> list = new ArrayList<>();
+    advertRepository.findAdvertsByFullFilter(request.getProvince(), request.getPosition(),
+        request.getDepartment(), request.getSearchText()).stream().forEach(advert -> {
+      try {
+        advertDtoConverter.convertToAdvertCardInfo(advert);
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
+    });
+    return list;
   }
 
   public void addUserToAdvert(Advert advert, ApplicationDetail application) {
@@ -86,13 +109,63 @@ public class AdvertService {
   }
 
   public void updateAdvertPhoto(MultipartFile file, Long id)
-      throws AdvertNotFoundException, IOException {
+      throws AdvertNotFoundException, IOException, SQLException {
     Advert advert = findById(id);
-    advert.setPhoto(file.getBytes());
+    advert.setPhoto((file.getBytes()));
     advertRepository.save(advert);
   }
 
-  public byte[] getAdvertPhoto(Long id) throws AdvertNotFoundException {
-    return findById(id).getPhoto();
+  public Blob getAdvertPhoto(Long id) throws AdvertNotFoundException, SQLException {
+    return new SerialBlob(findById(id).getPhoto());
+  }
+
+  public Long getAdvertCount() {
+    return advertRepository.count();
+  }
+
+  public List<DashboardAdvertTableInfoDto> getEndingAdverts() {
+    long DAY_IN_MS = 1000 * 60 * 60 * 24;
+    java.util.Date utilDate = new java.util.Date(System.currentTimeMillis() + (7 * DAY_IN_MS));
+    java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+    List<DashboardAdvertTableInfoDto> list = new ArrayList<>();
+    advertRepository.findEndingAdverts(sqlDate)
+        .forEach(advert -> list.add(advertDtoConverter.convertToDashboardAdvertInfo(advert)));
+    return list;
+  }
+
+  public List<DashboardAdvertTableInfoDto> getStartingAdverts() {
+    long DAY_IN_MS = 1000 * 60 * 60 * 24;
+    java.util.Date utilDate = new java.util.Date(System.currentTimeMillis() - (7 * DAY_IN_MS));
+    java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+    List<DashboardAdvertTableInfoDto> list = new ArrayList<>();
+    advertRepository.findStartingAdverts(sqlDate)
+        .forEach(advert -> list.add(advertDtoConverter.convertToDashboardAdvertInfo(advert)));
+    return list;
+  }
+
+  public List<AdvertCardInfoDto> getAdvertCards() {
+    List<AdvertCardInfoDto> list = new ArrayList<>();
+
+    findAll().stream().filter(Advert::isActive).forEach(advert -> {
+      try {
+        list.add(advertDtoConverter.convertToAdvertCardInfo(advert));
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
+    });
+    return list;
+  }
+
+  public AdminAdvertInfoResponse getAdvertInfo(Long id) throws AdvertNotFoundException {
+    return advertDtoConverter.convertToAdminInfoResponse(findById(id));
+  }
+
+  public List<AdvertAppliedUserInfoResponse> getApplicants(Long id) throws AdvertNotFoundException {
+    List<AdvertAppliedUserInfoResponse> list = new ArrayList<>();
+    findById(id).getApplications().stream()
+        .filter(applicationDetail -> !applicationDetail.isDecided())
+        .forEach(applicationDetail -> list.add(
+            userDtoConverter.convertToAdvertAppliedUserInfoResponse(applicationDetail.getUser())));
+    return list;
   }
 }
