@@ -1,15 +1,17 @@
 package com.lcwaikiki.advertservice.dto.model.advert;
 
+import java.sql.Blob;
+
 public class AdvertCardInfoDto {
 
   private Long id;
-  private byte[] image;
+  private Blob image;
   private String advertName;
   private String position;
   private String summary;
   private String location;
 
-  public AdvertCardInfoDto(Long id, byte[] image, String advertName, String position,
+  public AdvertCardInfoDto(Long id, Blob image, String advertName, String position,
       String summary,
       String location) {
     this.id = id;
@@ -20,7 +22,7 @@ public class AdvertCardInfoDto {
     this.location = location;
   }
 
-  public byte[] getImage() {
+  public Blob getImage() {
     return image;
   }
 

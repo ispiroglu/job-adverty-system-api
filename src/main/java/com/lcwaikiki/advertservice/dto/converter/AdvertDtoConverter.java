@@ -14,6 +14,7 @@ import com.lcwaikiki.advertservice.model.ApplicationStatus;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import javax.sql.rowset.serial.SerialBlob;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -94,7 +95,7 @@ public class AdvertDtoConverter {
 
   public AdvertCardInfoDto convertToAdvertCardInfo(Advert advert) throws SQLException {
     return new AdvertCardInfoDto(
-        advert.getId(), advert.getPhoto() != null ? (advert.getPhoto()) : null,
+        advert.getId(), advert.getPhoto() != null ? (new SerialBlob(advert.getPhoto())) : null,
         advert.getName(), advert.getPosition(),
         advert.getSummary(),
         advert.getDistrict() + "/" + advert.getProvince()

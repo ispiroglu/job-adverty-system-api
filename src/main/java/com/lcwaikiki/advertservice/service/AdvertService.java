@@ -21,7 +21,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.sql.rowset.serial.SerialBlob;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,15 +29,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class AdvertService {
 
   private final AdvertRepository advertRepository;
-  private final ModelMapper modelMapper;
   private final AdvertDtoConverter advertDtoConverter;
   private final UserDtoConverter userDtoConverter;
 
   public AdvertService(AdvertRepository advertRepository,
-      ModelMapper modelMapper,
       AdvertDtoConverter advertDtoConverter, UserDtoConverter userDtoConverter) {
     this.advertRepository = advertRepository;
-    this.modelMapper = modelMapper;
     this.advertDtoConverter = advertDtoConverter;
     this.userDtoConverter = userDtoConverter;
   }
@@ -84,14 +80,20 @@ public class AdvertService {
 
   public List<AdvertCardInfoDto> findFilteredAdverts(GetFilteredAdvertsRequest request) {
     List<AdvertCardInfoDto> list = new ArrayList<>();
-    advertRepository.findAdvertsByFullFilter(request.getProvince(), request.getPosition(),
-        request.getDepartment(), request.getSearchText()).stream().forEach(advert -> {
-      try {
-        advertDtoConverter.convertToAdvertCardInfo(advert);
-      } catch (SQLException e) {
-        throw new RuntimeException(e);
-      }
-    });
+    advertRepository.findAdvertsByFullFilter(
+            request.getProvince(),
+            request.getPosition(),
+            request.getDepartment(),
+            request.getSearchText())
+        .stream().forEach(advert -> {
+          try {
+            list.add(
+                advertDtoConverter.convertToAdvertCardInfo(advert)
+            );
+          } catch (SQLException e) {
+            throw new RuntimeException(e);
+          }
+        });
     return list;
   }
 

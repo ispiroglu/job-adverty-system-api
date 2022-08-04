@@ -78,12 +78,14 @@ public class AdvertController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @DeleteMapping("/{id}")
   public void delete(@PathVariable long id) throws AdvertNotFoundException {
+    System.out.println("Delete");
     advertService.deleteAdvert(id);
   }
 
   @PatchMapping("/filter") // Patch ??
   public ResponseEntity<List<AdvertCardInfoDto>> findFilteredAdverts(
-      GetFilteredAdvertsRequest request) {
+      @RequestBody GetFilteredAdvertsRequest request) {
+    System.out.println(request);
     return ResponseEntity.ok(advertService.findFilteredAdverts(request));
   }
 
