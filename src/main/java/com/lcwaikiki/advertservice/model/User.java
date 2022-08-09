@@ -82,10 +82,20 @@ public class User {
     this.cv = cv;
   }
 
-  public User(boolean isEmployer, String email, String password) {
+  public User(boolean isEmployer, String email, String password, String firstname,
+      String lastname) {
     this.isEmployer = isEmployer;
     this.email = email;
     this.password = password;
+    this.firstname = firstname;
+    this.lastname = lastname;
+//    this.province = "-1";
+//    this.provinceID = -1;
+//    this.district = "";
+//    this.gender = "male";
+//    this.phoneNumber = "";
+//    this.experience = 0;
+//    this.aboutUser = "";
   }
 
   public User() {

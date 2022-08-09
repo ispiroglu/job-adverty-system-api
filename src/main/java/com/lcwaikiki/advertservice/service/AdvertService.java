@@ -56,20 +56,6 @@ public class AdvertService {
     advertToSave.setActive(advert.isActive());
     advertToSave.setPhoto(advert.getPhoto());
     advertRepository.save(advertToSave);
-//    advert.setName(updateAdvertRequest.getName());
-//    advert.setSummary( updateAdvertRequest.getSummary());
-//    advert.setStartDate(updateAdvertRequest.getStartDate());
-//    advert.setEndDate( updateAdvertRequest.getEndDate());
-//    advert.setPosition(updateAdvertRequest.getPosition());
-//    advert.setCapacity(updateAdvertRequest.getCapacity());
-//    advert.setDistrict(updateAdvertRequest.getDistrict());
-//    advert.setProvince(updateAdvertRequest.getProvince());
-//    advert.setProvinceID(updateAdvertRequest.getProvinceID());
-//    advert.setJobDefinition(updateAdvertRequest.getJobDefinition());
-//    advert.setActive(updateAdvertRequest.isActive());
-//    advert.setPhotoUrl(updateAdvertRequest.getPhotoUrl());
-//    advert.setCompanyName(updateAdvertRequest.getCompanyName());
-//    advert.setDepartment(updateAdvertRequest.getDepartment());
   }
 
   public void deleteAdvert(long id) throws AdvertNotFoundException {

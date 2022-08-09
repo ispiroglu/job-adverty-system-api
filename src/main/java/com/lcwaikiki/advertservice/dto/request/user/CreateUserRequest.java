@@ -13,11 +13,16 @@ public class CreateUserRequest {
   @NotNull(message = "Password cannot be Null")
   @NotEmpty(message = "Password cannot be Empty")
   private String password;
+  private String firstname;
+  private String lastname;
 
-  public CreateUserRequest(boolean isEmployer, String email, String password) {
+  public CreateUserRequest(boolean isEmployer, String email, String password, String firstname,
+      String lastname) {
     this.isEmployer = isEmployer;
     this.email = email;
     this.password = password;
+    this.firstname = firstname;
+    this.lastname = lastname;
   }
 
   public boolean isEmployer() {
@@ -30,5 +35,24 @@ public class CreateUserRequest {
 
   public String getPassword() {
     return password;
+  }
+
+  public String getFirstname() {
+    return firstname;
+  }
+
+  public String getLastname() {
+    return lastname;
+  }
+
+  @Override
+  public String toString() {
+    return "CreateUserRequest{" +
+        "isEmployer=" + isEmployer +
+        ", email='" + email + '\'' +
+        ", password='" + password + '\'' +
+        ", firstname='" + firstname + '\'' +
+        ", lastname='" + lastname + '\'' +
+        '}';
   }
 }

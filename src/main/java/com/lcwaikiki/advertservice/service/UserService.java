@@ -36,7 +36,8 @@ public class UserService {
 
   public UserCredentialDto createUser(CreateUserRequest createUserRequest) {
     User user = new User(createUserRequest.isEmployer(), createUserRequest.getEmail(),
-        createUserRequest.getPassword());
+        createUserRequest.getPassword(), createUserRequest.getFirstname(),
+        createUserRequest.getLastname());
     return userDtoConverter.convertToUserCredentialDto(userRepository.save(user));
   }
 

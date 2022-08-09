@@ -31,8 +31,7 @@ public class OperationHandlerService {
 
   public void addApplicantToAdvert(Long advertId, Long userId)
       throws UserNotFoundException, AdvertNotFoundException, UserNotValidForApplicationException, AdvertIsFullException, UserAlreadyAppliedException {
-    System.out.println(advertId + "Advert");
-    System.out.println(userId + "User");
+
     User user = userService.findById(userId);
 
     if (!UserValidationUtil.isValidForApplication(user)) {
@@ -43,13 +42,11 @@ public class OperationHandlerService {
     if (!AdvertValidationUtil.isAdvertCapacityFull(advert)) {
       throw new AdvertIsFullException();
     }
-    System.out.println("Advert Before Apply");
-    System.out.println(advert);
 
-    if (applicationDetailRepository.getApplicationDetailByAdvertAndUser(advert, user) != null)
+    if (applicationDetailRepository.getApplicationDetailByAdvertAndUser(advert, user) != null) {
       throw new UserAlreadyAppliedException();
+    }
 
-    System.out.println("LOl");
     ApplicationDetail application = new ApplicationDetail(
         advert, user
     );

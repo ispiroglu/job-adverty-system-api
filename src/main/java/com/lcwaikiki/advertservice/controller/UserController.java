@@ -60,6 +60,7 @@ public class UserController {
   @PostMapping
   public ResponseEntity<UserCredentialDto> createUser(
       @RequestBody CreateUserRequest createUserRequest) {
+    System.out.println(createUserRequest);
     return ResponseEntity.ok(userService.createUser(createUserRequest));
   }
 
