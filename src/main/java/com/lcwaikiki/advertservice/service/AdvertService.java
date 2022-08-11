@@ -21,6 +21,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.sql.rowset.serial.SerialBlob;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -131,17 +133,18 @@ public class AdvertService {
     return list;
   }
 
-  public List<AdvertCardInfoDto> getAdvertCards() {
-    List<AdvertCardInfoDto> list = new ArrayList<>();
+  public Page<AdvertCardInfoDto> getAdvertCards(int page) {
 
-    findAll().stream().filter(Advert::isActive).forEach(advert -> {
+    PageRequest pr = PageRequest.of(page, 9);
+    Page<Advert> test = advertRepository.findAdvertsByActive(true, pr);
+
+    return test.map(advert -> {
       try {
-        list.add(advertDtoConverter.convertToAdvertCardInfo(advert));
+        return advertDtoConverter.convertToAdvertCardInfo(advert);
       } catch (SQLException e) {
         throw new RuntimeException(e);
       }
     });
-    return list;
   }
 
   public AdminAdvertInfoResponse getAdvertInfo(Long id) throws AdvertNotFoundException {

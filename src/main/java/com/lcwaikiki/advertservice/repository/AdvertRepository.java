@@ -4,6 +4,8 @@ import com.lcwaikiki.advertservice.filter.AdvertSpecification;
 import com.lcwaikiki.advertservice.model.Advert;
 import java.sql.Date;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -16,6 +18,9 @@ public interface AdvertRepository extends JpaRepository<Advert, Long>,
 
 
   List<Advert> findAdvertsByActive(boolean active);
+
+  Page<Advert> findAdvertsByActive(boolean active, PageRequest pageRequest);
+
 
   List<Advert> findAdvertsByPositionContainingIgnoreCase(String position);
 
