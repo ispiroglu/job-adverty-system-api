@@ -21,7 +21,7 @@ public class UserDtoConverter {
 
   public UserDetailResponse convertToUserDetailsDto(User from) {
     return new UserDetailResponse(
-        from.getFirstname(), from.getLastname(),
+        from.getId(), from.getFirstname(), from.getLastname(),
         from.getGender(), from.getEmail(),
         from.getPhoneNumber(), from.getProvince(),
         from.getProvinceID(), from.getDistrict(), from.getExperience(), from.getAboutUser()

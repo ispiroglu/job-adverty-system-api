@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -55,9 +56,13 @@ public class Advert {
   @UpdateTimestamp
   private LocalDateTime update;
   @OneToMany(mappedBy = "advert")
-//  @JsonManagedReference
   @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
   private Set<ApplicationDetail> applications;
+
+  @OneToOne(mappedBy = "advert")
+  @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+  private AdvertOwner advertOwner;
+
 
   public Advert(Long id, String name, String summary, Date startDate, Date endDate,
       String position, int capacity, String district, String province, int provinceID,
@@ -268,6 +273,15 @@ public class Advert {
 
   public void setUpdate(LocalDateTime update) {
     this.update = update;
+  }
+
+
+  public AdvertOwner getAdvertOwner() {
+    return advertOwner;
+  }
+
+  public void setAdvertOwner(AdvertOwner advertOwner) {
+    this.advertOwner = advertOwner;
   }
 
   public Advert updateAdvert(Advert baseAdvert, Advert newAdvert) {

@@ -2,6 +2,7 @@ package com.lcwaikiki.advertservice.repository;
 
 import com.lcwaikiki.advertservice.filter.AdvertSpecification;
 import com.lcwaikiki.advertservice.model.Advert;
+import com.lcwaikiki.advertservice.model.AdvertOwner;
 import java.sql.Date;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,9 @@ public interface AdvertRepository extends JpaRepository<Advert, Long>,
   List<Advert> findAdvertsByActive(boolean active);
 
   Page<Advert> findAdvertsByActive(boolean active, PageRequest pageRequest);
+
+  Page<Advert> findAdvertsByActiveAndAdvertOwner(boolean active, PageRequest pageRequest,
+      AdvertOwner advertOwner);
 
 
   List<Advert> findAdvertsByPositionContainingIgnoreCase(String position);

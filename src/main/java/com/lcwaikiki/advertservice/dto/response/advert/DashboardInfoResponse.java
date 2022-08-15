@@ -6,17 +6,18 @@ import java.util.List;
 public class DashboardInfoResponse {
 
   private Long totalAdvertCount;
+  private Long totalApplicationCount;
   private Long totalUserCount;
-  private Long totalEventCount;
   private List<DashboardAdvertTableInfoDto> soonEndingAdverts;
   private List<DashboardAdvertTableInfoDto> soonStartingAdverts;
 
-  public DashboardInfoResponse(Long totalAdvertCount, Long totalUserCount, Long totalEventCount,
+  public DashboardInfoResponse(Long totalAdvertCount, Long totalApplicationCount,
+      Long totalUserCount,
       List<DashboardAdvertTableInfoDto> soonEndingAdverts,
       List<DashboardAdvertTableInfoDto> soonStartingAdverts) {
     this.totalAdvertCount = totalAdvertCount;
+    this.totalApplicationCount = totalApplicationCount;
     this.totalUserCount = totalUserCount;
-    this.totalEventCount = totalEventCount;
     this.soonEndingAdverts = soonEndingAdverts;
     this.soonStartingAdverts = soonStartingAdverts;
   }
@@ -25,12 +26,12 @@ public class DashboardInfoResponse {
     return totalAdvertCount;
   }
 
-  public Long getTotalUserCount() {
-    return totalUserCount;
+  public Long getTotalApplicationCount() {
+    return totalApplicationCount;
   }
 
-  public Long getTotalEventCount() {
-    return totalEventCount;
+  public Long getTotalUserCount() {
+    return totalUserCount;
   }
 
   public List<DashboardAdvertTableInfoDto> getSoonEndingAdverts() {

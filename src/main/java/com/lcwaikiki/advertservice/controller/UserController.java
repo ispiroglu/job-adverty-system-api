@@ -8,13 +8,16 @@ import com.lcwaikiki.advertservice.dto.request.user.UpdateUserPhotoRequest;
 import com.lcwaikiki.advertservice.dto.request.user.UpdateUserRequest;
 import com.lcwaikiki.advertservice.dto.response.user.UserApplicationTableAdvertInfo;
 import com.lcwaikiki.advertservice.dto.response.user.UserDetailResponse;
+import com.lcwaikiki.advertservice.dto.response.user.UserLoginResponse;
 import com.lcwaikiki.advertservice.exception.UserNotFoundException;
 import com.lcwaikiki.advertservice.model.User;
+import com.lcwaikiki.advertservice.service.OperationHandlerService;
 import com.lcwaikiki.advertservice.service.UserService;
 import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -31,13 +34,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("api/v1/users")
+@Slf4j
 public class UserController {
 
   private final UserService userService;
+  private final OperationHandlerService operationHandlerService;
 
 
-  public UserController(UserService userService) {
+  public UserController(UserService userService, OperationHandlerService operationHandlerService) {
     this.userService = userService;
+    this.operationHandlerService = operationHandlerService;
   }
 
   @GetMapping
@@ -48,7 +54,14 @@ public class UserController {
   @GetMapping("/{id}")
   public ResponseEntity<UserDetailResponse> getUserDetail(@PathVariable long id)
       throws UserNotFoundException {
+    log.info("Get user detail -< {}", id);
     return ResponseEntity.ok().body(userService.getUserDetail(id));
+  }
+
+  @GetMapping("/login/{email}")
+  public ResponseEntity<UserLoginResponse> getUserDetail(@PathVariable String email)
+      throws UserNotFoundException {
+    return ResponseEntity.ok().body(operationHandlerService.getUserDetail(email));
   }
 
   @GetMapping("/{id}/fullInfo")
@@ -57,10 +70,10 @@ public class UserController {
   }
 
   @ResponseStatus(HttpStatus.CREATED)
-  @PostMapping
+  @PostMapping("/registration")
   public ResponseEntity<UserCredentialDto> createUser(
       @RequestBody CreateUserRequest createUserRequest) {
-    System.out.println(createUserRequest);
+    log.info("Registration Request -> {}", createUserRequest);
     return ResponseEntity.ok(userService.createUser(createUserRequest));
   }
 
@@ -83,6 +96,7 @@ public class UserController {
   @PatchMapping("/{id}/photo")
   public void upload(UpdateUserPhotoRequest request, @PathVariable Long id)
       throws UserNotFoundException, IOException {
+    log.info("Patch photo -> {}", id);
     userService.updateUserProfilePicture(request.getFile(), id);
   }
 
@@ -111,5 +125,9 @@ public class UserController {
     return ResponseEntity.ok(userService.getAppliedAdverts(id));
   }
 
-
+//  @GetMapping("/{id}/ownedAdverts")
+//  public ResponseEntity<List<Long>> getOwnedAdvertIDs(@PathVariable Long id)
+//      throws UserNotFoundException {
+//    return ResponseEntity.ok(operationHandlerService.getOwnedAdvertIDs(id));
+//  }
 }

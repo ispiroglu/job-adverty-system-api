@@ -1,11 +1,13 @@
 package com.lcwaikiki.advertservice.controller;
 
 import com.lcwaikiki.advertservice.dto.response.advert.DashboardInfoResponse;
+import com.lcwaikiki.advertservice.exception.UserNotFoundException;
 import com.lcwaikiki.advertservice.service.OperationHandlerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -20,8 +22,8 @@ public class Dashboard {
   }
 
   @GetMapping
-  public ResponseEntity<DashboardInfoResponse> getDashboardInfo() {
-    System.out.println("GEET from dashboard.");
-    return ResponseEntity.ok(service.getDashboardInfoDto());
+  public ResponseEntity<DashboardInfoResponse> getDashboardInfo(@RequestParam Long userID)
+      throws UserNotFoundException {
+    return ResponseEntity.ok(service.getDashboardInfoDto(userID));
   }
 }

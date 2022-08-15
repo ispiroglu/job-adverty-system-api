@@ -5,6 +5,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication(exclude = LiquibaseAutoConfiguration.class)
 public class AdvertServiceApplication {
@@ -17,4 +19,11 @@ public class AdvertServiceApplication {
   Faker faker() {
     return new Faker();
   }
+
+  @Bean
+  PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
+
+  
 }

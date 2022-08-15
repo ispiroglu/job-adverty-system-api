@@ -28,7 +28,6 @@ public class ApplicationDetail {
 
   @ManyToOne
   @JoinColumn(name = "user_id")
-//  @JsonBackReference
   @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
   private User user;
 

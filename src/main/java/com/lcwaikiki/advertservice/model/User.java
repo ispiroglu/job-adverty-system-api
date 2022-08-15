@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.time.LocalDateTime;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -52,6 +53,10 @@ public class User {
   @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
   private Set<ApplicationDetail> applications;
 
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+  @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+  private Set<AdvertOwner> ownedAdverts;
+
   @Lob
   private byte[] profilePhoto;
 
@@ -89,13 +94,6 @@ public class User {
     this.password = password;
     this.firstname = firstname;
     this.lastname = lastname;
-//    this.province = "-1";
-//    this.provinceID = -1;
-//    this.district = "";
-//    this.gender = "male";
-//    this.phoneNumber = "";
-//    this.experience = 0;
-//    this.aboutUser = "";
   }
 
   public User() {
@@ -246,6 +244,10 @@ public class User {
     applications.add(application);
   }
 
+  public void addOwnedAdvert(AdvertOwner ownedAdvert) {
+    ownedAdverts.add(ownedAdvert);
+  }
+
   public byte[] getProfilePhoto() {
     return profilePhoto;
   }
@@ -260,5 +262,14 @@ public class User {
 
   public void setCv(byte[] cv) {
     this.cv = cv;
+  }
+
+  public Set<AdvertOwner> getOwnedAdverts() {
+    return ownedAdverts;
+  }
+
+
+  public void setOwnedAdverts(Set<AdvertOwner> ownedAdverts) {
+    this.ownedAdverts = ownedAdverts;
   }
 }

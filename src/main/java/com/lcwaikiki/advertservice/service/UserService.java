@@ -8,6 +8,7 @@ import com.lcwaikiki.advertservice.dto.request.user.UpdateUserRequest;
 import com.lcwaikiki.advertservice.dto.response.user.UserApplicationTableAdvertInfo;
 import com.lcwaikiki.advertservice.dto.response.user.UserDetailResponse;
 import com.lcwaikiki.advertservice.exception.UserNotFoundException;
+import com.lcwaikiki.advertservice.model.AdvertOwner;
 import com.lcwaikiki.advertservice.model.ApplicationDetail;
 import com.lcwaikiki.advertservice.model.User;
 import com.lcwaikiki.advertservice.repository.UserRepository;
@@ -15,28 +16,58 @@ import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.sql.rowset.serial.SerialBlob;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-public class UserService {
+@Transactional
+@Slf4j
+public class UserService implements UserDetailsService {
 
   private final UserRepository userRepository;
   private final UserDtoConverter userDtoConverter;
   private final AdvertDtoConverter advertDtoConverter;
+  private final PasswordEncoder passwordEncoder;
+
 
   public UserService(UserRepository userRepository,
-      UserDtoConverter userDtoConverter, AdvertDtoConverter advertDtoConverter) {
+      UserDtoConverter userDtoConverter, AdvertDtoConverter advertDtoConverter,
+      PasswordEncoder passwordEncoder) {
     this.userRepository = userRepository;
     this.userDtoConverter = userDtoConverter;
     this.advertDtoConverter = advertDtoConverter;
+    this.passwordEncoder = passwordEncoder;
+  }
+
+  @Override
+  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    User user = userRepository.findUserByEmail(email);
+    if (user == null) {
+      throw new UsernameNotFoundException("Email not found in database");
+    }
+    Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+    authorities.add(new SimpleGrantedAuthority(user.isEmployer() ? "employer" : "employee"));
+    authorities.add(new SimpleGrantedAuthority("LOGGED_IN"));
+    log.info("Auths -> {}", authorities);
+    UserDetails userDetails = new org.springframework.security.core.userdetails.User(
+        user.getEmail(), user.getPassword(), authorities
+    );
+    return userDetails;
   }
 
   public UserCredentialDto createUser(CreateUserRequest createUserRequest) {
     User user = new User(createUserRequest.isEmployer(), createUserRequest.getEmail(),
-        createUserRequest.getPassword(), createUserRequest.getFirstname(),
+        passwordEncoder.encode(createUserRequest.getPassword()), createUserRequest.getFirstname(),
         createUserRequest.getLastname());
     return userDtoConverter.convertToUserCredentialDto(userRepository.save(user));
   }
@@ -55,8 +86,6 @@ public class UserService {
     user.setExperience(updateUserRequest.getExperience());
     user.setAboutUser(updateUserRequest.getAboutUser());
     userRepository.save(user);
-
-//    return userDtoConverter.convertToUserDetailsDto(userRepository.save(user));
   }
 
   public void deleteUser(Long id) throws UserNotFoundException {
@@ -76,6 +105,10 @@ public class UserService {
 
   public User findById(Long id) throws UserNotFoundException {
     return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+  }
+
+  public User findByEmail(String email) {
+    return userRepository.findUserByEmail(email);
   }
 
   public UserDetailResponse getUserDetail(Long id) throws UserNotFoundException {
@@ -120,4 +153,12 @@ public class UserService {
   public Long getUserCount() {
     return userRepository.count();
   }
+
+  public void addAdvertOwnershipToUser(AdvertOwner advertOwner, User user)
+      throws UserNotFoundException {
+    user.addOwnedAdvert(advertOwner);
+    userRepository.save(user);
+  }
+
+
 }

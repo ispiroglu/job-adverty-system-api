@@ -23,6 +23,7 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/api/v1/adverts")
+@Slf4j
 public class AdvertController {
 
   private final AdvertService advertService;
@@ -65,8 +67,10 @@ public class AdvertController {
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
   public ResponseEntity<AdvertDetailsDto> create(
-      @RequestBody CreateAdvertRequest createAdvertRequest) {
-    return ResponseEntity.ok(advertService.createAdvert(createAdvertRequest));
+      @RequestBody CreateAdvertRequest createAdvertRequest, @RequestParam Long creatorID)
+      throws UserNotFoundException {
+    log.info("Create Advert Request -> {}", creatorID);
+    return ResponseEntity.ok(operationHandlerService.createAdvert(createAdvertRequest, creatorID));
   }
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -137,8 +141,10 @@ public class AdvertController {
   }
 
   @GetMapping
-  public ResponseEntity<Page<AdvertCardInfoDto>> getAdvertCards(@RequestParam int page) {
-    return ResponseEntity.ok(advertService.getAdvertCards(page));
+  public ResponseEntity<Page<AdvertCardInfoDto>> getAdvertCards(@RequestParam int page,
+      @RequestParam Long creatorID) throws UserNotFoundException {
+    log.info("123");
+    return ResponseEntity.ok(advertService.getAdvertCards(page, creatorID));
   }
 
   @GetMapping("/{id}/adminView")

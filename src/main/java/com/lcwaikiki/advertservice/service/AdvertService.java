@@ -11,16 +11,21 @@ import com.lcwaikiki.advertservice.dto.request.advert.UpdateAdvertRequest;
 import com.lcwaikiki.advertservice.dto.response.advert.AdminAdvertInfoResponse;
 import com.lcwaikiki.advertservice.dto.response.user.AdvertAppliedUserInfoResponse;
 import com.lcwaikiki.advertservice.exception.AdvertNotFoundException;
+import com.lcwaikiki.advertservice.exception.UserNotFoundException;
 import com.lcwaikiki.advertservice.model.Advert;
+import com.lcwaikiki.advertservice.model.AdvertOwner;
 import com.lcwaikiki.advertservice.model.ApplicationDetail;
+import com.lcwaikiki.advertservice.repository.AdvertOwnerRepository;
 import com.lcwaikiki.advertservice.repository.AdvertRepository;
 import java.io.IOException;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import javax.sql.rowset.serial.SerialBlob;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -28,24 +33,32 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
+@Slf4j
 public class AdvertService {
 
   private final AdvertRepository advertRepository;
   private final AdvertDtoConverter advertDtoConverter;
   private final UserDtoConverter userDtoConverter;
+  private final AdvertOwnerRepository advertOwnerRepository;
+  private final UserService userService;
 
   public AdvertService(AdvertRepository advertRepository,
-      AdvertDtoConverter advertDtoConverter, UserDtoConverter userDtoConverter) {
+      AdvertDtoConverter advertDtoConverter, UserDtoConverter userDtoConverter,
+      AdvertOwnerRepository advertOwnerRepository, UserService userService) {
     this.advertRepository = advertRepository;
     this.advertDtoConverter = advertDtoConverter;
     this.userDtoConverter = userDtoConverter;
+    this.advertOwnerRepository = advertOwnerRepository;
+    this.userService = userService;
   }
 
   public AdvertDetailsDto createAdvert(CreateAdvertRequest createAdvertRequest) {
     Advert advert = advertDtoConverter.convertToAdvert(createAdvertRequest);
-//    advert.setActive(true);
-    System.out.println(advert);
     return advertDtoConverter.convertToAdvertDetailsDto(advertRepository.save(advert));
+  }
+
+  public void saveAdvert(Advert advert) {
+    advertRepository.save(advert);
   }
 
   public void updateAdvert(UpdateAdvertRequest updateAdvertRequest, Long id)
@@ -113,13 +126,14 @@ public class AdvertService {
     return advertRepository.count();
   }
 
-  public List<DashboardAdvertTableInfoDto> getEndingAdverts() {
+  public LinkedList<DashboardAdvertTableInfoDto> getEndingAdverts() {
     long DAY_IN_MS = 1000 * 60 * 60 * 24;
     java.util.Date utilDate = new java.util.Date(System.currentTimeMillis() + (7 * DAY_IN_MS));
     java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-    List<DashboardAdvertTableInfoDto> list = new ArrayList<>();
+    LinkedList<DashboardAdvertTableInfoDto> list = new LinkedList<>();
     advertRepository.findEndingAdverts(sqlDate)
         .forEach(advert -> list.add(advertDtoConverter.convertToDashboardAdvertInfo(advert)));
+
     return list;
   }
 
@@ -133,14 +147,21 @@ public class AdvertService {
     return list;
   }
 
-  public Page<AdvertCardInfoDto> getAdvertCards(int page) {
+  public Page<AdvertCardInfoDto> getAdvertCards(int page, Long creatorID)
+      throws UserNotFoundException {
+    PageRequest pr = PageRequest.of(page, 12);
 
-    PageRequest pr = PageRequest.of(page, 9);
-    Page<Advert> test = advertRepository.findAdvertsByActive(true, pr);
+    Page<AdvertOwner> test;
 
-    return test.map(advert -> {
+    if (creatorID != -1) {
+      test = advertOwnerRepository.findAdvertOwnersByUser(
+          userService.findById(creatorID), pr);
+    } else {
+      test = advertOwnerRepository.findAll(pr);
+    }
+    return test.map(advertOwner -> {
       try {
-        return advertDtoConverter.convertToAdvertCardInfo(advert);
+        return advertDtoConverter.convertToAdvertCardInfo(advertOwner.getAdvert());
       } catch (SQLException e) {
         throw new RuntimeException(e);
       }
