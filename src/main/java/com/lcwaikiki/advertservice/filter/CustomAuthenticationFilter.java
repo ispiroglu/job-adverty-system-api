@@ -51,6 +51,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
       HttpServletResponse response, AuthenticationException failed)
       throws IOException, ServletException {
     log.info("Failed to authenticate -> {}", failed.getMessage());
+    throw new javax.security.sasl.AuthenticationException("Invalid email or password");
   }
 
   @Override

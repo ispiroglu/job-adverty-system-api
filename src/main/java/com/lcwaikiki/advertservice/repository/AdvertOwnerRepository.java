@@ -9,7 +9,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AdvertOwnerRepository extends JpaRepository<AdvertOwner, Long> {
 
-  Page<AdvertOwner> findAdvertOwnersByUser(User user, PageRequest pageRequest);
+  Page<AdvertOwner> findAdvertOwnersByUserAndAdvert_Active(User user, PageRequest pageRequest,
+      boolean active);
 
-  List<AdvertOwner> findAdvertOwnersByUser(User user);
+  Page<AdvertOwner> findAdvertOwnersByAdvert_Active(PageRequest pageRequest,
+      boolean active);
+
+  List<AdvertOwner> findAdvertOwnersByUserAndAdvert_Active(User user, boolean active);
 }

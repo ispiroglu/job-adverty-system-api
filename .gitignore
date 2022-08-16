@@ -33,3 +33,4 @@ build/
 .vscode/
 
 src/main/java/com/lcwaikiki/advertservice/config/KeycloakServerProperties.java
+src/main/resources/application.properties

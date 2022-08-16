@@ -58,4 +58,12 @@ public class AdvertOwner {
   public void setUser(User user) {
     this.user = user;
   }
+
+  @Override
+  public String toString() {
+    return "AdvertOwner{" +
+        "advert=" + advert +
+        ", user=" + user +
+        '}';
+  }
 }

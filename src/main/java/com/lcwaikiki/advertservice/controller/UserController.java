@@ -54,7 +54,6 @@ public class UserController {
   @GetMapping("/{id}")
   public ResponseEntity<UserDetailResponse> getUserDetail(@PathVariable long id)
       throws UserNotFoundException {
-    log.info("Get user detail -< {}", id);
     return ResponseEntity.ok().body(userService.getUserDetail(id));
   }
 
@@ -73,7 +72,6 @@ public class UserController {
   @PostMapping("/registration")
   public ResponseEntity<UserCredentialDto> createUser(
       @RequestBody CreateUserRequest createUserRequest) {
-    log.info("Registration Request -> {}", createUserRequest);
     return ResponseEntity.ok(userService.createUser(createUserRequest));
   }
 
@@ -96,7 +94,6 @@ public class UserController {
   @PatchMapping("/{id}/photo")
   public void upload(UpdateUserPhotoRequest request, @PathVariable Long id)
       throws UserNotFoundException, IOException {
-    log.info("Patch photo -> {}", id);
     userService.updateUserProfilePicture(request.getFile(), id);
   }
 

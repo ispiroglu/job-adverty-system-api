@@ -47,32 +47,6 @@ public class OperationHandlerService {
     this.advertOwnerRepository = advertOwnerRepository;
   }
 
-  public void addApplicantToAdvert(Long advertId, Long userId)
-      throws UserNotFoundException, AdvertNotFoundException, UserNotValidForApplicationException, AdvertIsFullException, UserAlreadyAppliedException {
-
-    User user = userService.findById(userId);
-    if (!UserValidationUtil.isValidForApplication(user)) {
-      throw new UserNotValidForApplicationException();
-    }
-
-    Advert advert = advertService.findById(advertId);
-    if (!AdvertValidationUtil.isAdvertCapacityFull(advert)) {
-      throw new AdvertIsFullException();
-    }
-
-    if (applicationDetailRepository.getApplicationDetailByAdvertAndUser(advert, user) != null) {
-      throw new UserAlreadyAppliedException();
-    }
-
-    ApplicationDetail application = new ApplicationDetail(
-        advert, user
-    );
-
-    userService.addApplicationToUser(user, application);
-    advertService.addUserToAdvert(advert, application);
-    applicationDetailRepository.save(application);
-  }
-
   public void updateApplicationStatus(Long advertId, Long userId, ApplicationStatus newStatus)
       throws AdvertNotFoundException, UserNotFoundException {
     ApplicationDetail application = applicationDetailRepository.getApplicationDetailByAdvertAndUser(
@@ -116,18 +90,45 @@ public class OperationHandlerService {
     );
   }
 
+  public void addApplicantToAdvert(Long advertId, Long userId)
+      throws UserNotFoundException, AdvertNotFoundException, UserNotValidForApplicationException, AdvertIsFullException, UserAlreadyAppliedException {
+
+    User user = userService.findById(userId);
+    if (!UserValidationUtil.isValidForApplication(user)) {
+      throw new UserNotValidForApplicationException();
+    }
+
+    Advert advert = advertService.findById(advertId);
+    if (!AdvertValidationUtil.isAdvertCapacityFull(advert)) {
+      throw new AdvertIsFullException();
+    }
+
+    if (applicationDetailRepository.getApplicationDetailByAdvertAndUser(advert, user) != null) {
+      throw new UserAlreadyAppliedException();
+    }
+
+    ApplicationDetail application = new ApplicationDetail(
+        advert, user
+    );
+
+    userService.addApplicationToUser(user, application);
+    advertService.addUserToAdvert(advert, application);
+
+    applicationDetailRepository.save(application);
+  }
+
   public AdvertDetailsDto createAdvert(CreateAdvertRequest createAdvertRequest, Long creatorID)
       throws UserNotFoundException {
-    Advert advert = advertDtoConverter.convertToAdvert(createAdvertRequest);
+    Advert advert = advertService.createAdvert(createAdvertRequest);
     User user = userService.findById(creatorID);
     AdvertOwner advertOwner = new AdvertOwner(advert, user);
     userService.addAdvertOwnershipToUser(advertOwner, user);
-    return advertService.createAdvert(createAdvertRequest);
+    return advertDtoConverter.convertToAdvertDetailsDto(advert);
   }
 
   public List<Long> getOwnedAdvertIDs(Long userID) throws UserNotFoundException {
     List<Long> advertIDs = new LinkedList<>();
-    advertOwnerRepository.findAdvertOwnersByUser(userService.findById(userID))
+    advertOwnerRepository.findAdvertOwnersByUserAndAdvert_Active(userService.findById(userID), true)
         .forEach(advertOwner -> advertIDs.add(advertOwner.getAdvert().getId()));
     return advertIDs;
   }

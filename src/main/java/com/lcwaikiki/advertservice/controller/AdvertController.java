@@ -69,7 +69,6 @@ public class AdvertController {
   public ResponseEntity<AdvertDetailsDto> create(
       @RequestBody CreateAdvertRequest createAdvertRequest, @RequestParam Long creatorID)
       throws UserNotFoundException {
-    log.info("Create Advert Request -> {}", creatorID);
     return ResponseEntity.ok(operationHandlerService.createAdvert(createAdvertRequest, creatorID));
   }
 
@@ -88,12 +87,19 @@ public class AdvertController {
     advertService.deleteAdvert(id);
   }
 
+  @GetMapping
+  public ResponseEntity<Page<AdvertCardInfoDto>> getAdvertCards(@RequestParam int page,
+      @RequestParam Long creatorID) throws UserNotFoundException {
+    return ResponseEntity.ok(advertService.getAdvertCards(page, creatorID));
+  }
+
   @PatchMapping("/filter") // Patch ??
   public ResponseEntity<List<AdvertCardInfoDto>> findFilteredAdverts(
-      @RequestBody GetFilteredAdvertsRequest request) {
-    System.out.println(request);
-    return ResponseEntity.ok(advertService.findFilteredAdverts(request));
+      @RequestBody GetFilteredAdvertsRequest request, @RequestParam Long userID)
+      throws SQLException, UserNotFoundException {
+    return ResponseEntity.ok(advertService.findFilteredAdverts(request, userID));
   }
+
 
   @PostMapping("/{id}/applications")
   public void addUserToAdvert(@RequestBody Long userID, @PathVariable Long id)
@@ -107,10 +113,21 @@ public class AdvertController {
     return ResponseEntity.ok(advertService.getApplicants(id));
   }
 
+  @GetMapping("/{id}/applications/closable")
+  public ResponseEntity<Boolean> getClosable(@PathVariable Long id)
+      throws AdvertNotFoundException {
+    return ResponseEntity.ok(advertService.canClose(id));
+  }
+
+  @GetMapping("/{id}/applications/active")
+  public ResponseEntity<Boolean> isActive(@PathVariable Long id)
+      throws AdvertNotFoundException {
+    return ResponseEntity.ok(advertService.isAdvertActive(id));
+  }
+
   @PatchMapping("/{id}/applications")
   public void updateApplicationStatus(@RequestBody UpdateApplicationStatusRequest request,
       @PathVariable Long id) throws UserNotFoundException, AdvertNotFoundException {
-//    System.out.println(request);
     operationHandlerService.updateApplicationStatus(id, request.getUserId(),
         request.getNewStatus());
   }
@@ -138,13 +155,6 @@ public class AdvertController {
   @GetMapping("/soonEndingAdverts")
   public ResponseEntity<List<DashboardAdvertTableInfoDto>> getSoonEndings() {
     return ResponseEntity.ok(advertService.getEndingAdverts());
-  }
-
-  @GetMapping
-  public ResponseEntity<Page<AdvertCardInfoDto>> getAdvertCards(@RequestParam int page,
-      @RequestParam Long creatorID) throws UserNotFoundException {
-    log.info("123");
-    return ResponseEntity.ok(advertService.getAdvertCards(page, creatorID));
   }
 
   @GetMapping("/{id}/adminView")

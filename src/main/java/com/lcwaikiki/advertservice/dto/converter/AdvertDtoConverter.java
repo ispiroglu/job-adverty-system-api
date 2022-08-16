@@ -14,11 +14,20 @@ import com.lcwaikiki.advertservice.model.ApplicationStatus;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.sql.rowset.serial.SerialBlob;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AdvertDtoConverter {
+
+  private final long DAY_IN_MS = 86400000L;
+
+  private boolean activate(Date startDate, Date endDate) {
+    Date today = new Date();
+    return startDate.getTime() <= today.getTime() + DAY_IN_MS
+        && today.getTime() < endDate.getTime() + DAY_IN_MS;
+  }
 
   public AdvertDetailsDto convertToAdvertDetailsDto(Advert advert) {
     return new AdvertDetailsDto(
@@ -31,6 +40,7 @@ public class AdvertDtoConverter {
   }
 
   public Advert convertToAdvert(CreateAdvertRequest createAdvertRequest) {
+
     return new Advert(
         createAdvertRequest.getName(), createAdvertRequest.getSummary(),
         createAdvertRequest.getStartDate(), createAdvertRequest.getEndDate(),
@@ -38,8 +48,7 @@ public class AdvertDtoConverter {
         createAdvertRequest.getCapacity(), createAdvertRequest.getDistrict(),
         createAdvertRequest.getProvince(),
         createAdvertRequest.getProvinceID(), createAdvertRequest.getJobDefinition(),
-        true,
-//        createAdvertRequest.getPhoto(),
+        activate(createAdvertRequest.getStartDate(), createAdvertRequest.getEndDate()),
         createAdvertRequest.getCompanyName(),
         createAdvertRequest.getDepartment());
   }

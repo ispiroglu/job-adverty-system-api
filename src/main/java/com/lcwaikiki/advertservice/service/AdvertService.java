@@ -3,7 +3,6 @@ package com.lcwaikiki.advertservice.service;
 import com.lcwaikiki.advertservice.dto.converter.AdvertDtoConverter;
 import com.lcwaikiki.advertservice.dto.converter.UserDtoConverter;
 import com.lcwaikiki.advertservice.dto.model.advert.AdvertCardInfoDto;
-import com.lcwaikiki.advertservice.dto.model.advert.AdvertDetailsDto;
 import com.lcwaikiki.advertservice.dto.model.advert.DashboardAdvertTableInfoDto;
 import com.lcwaikiki.advertservice.dto.request.advert.CreateAdvertRequest;
 import com.lcwaikiki.advertservice.dto.request.advert.GetFilteredAdvertsRequest;
@@ -41,24 +40,27 @@ public class AdvertService {
   private final UserDtoConverter userDtoConverter;
   private final AdvertOwnerRepository advertOwnerRepository;
   private final UserService userService;
+  private final EmailServiceImpl emailService;
 
   public AdvertService(AdvertRepository advertRepository,
       AdvertDtoConverter advertDtoConverter, UserDtoConverter userDtoConverter,
-      AdvertOwnerRepository advertOwnerRepository, UserService userService) {
+      AdvertOwnerRepository advertOwnerRepository, UserService userService,
+      EmailServiceImpl emailService) {
     this.advertRepository = advertRepository;
     this.advertDtoConverter = advertDtoConverter;
     this.userDtoConverter = userDtoConverter;
     this.advertOwnerRepository = advertOwnerRepository;
     this.userService = userService;
+    this.emailService = emailService;
   }
 
-  public AdvertDetailsDto createAdvert(CreateAdvertRequest createAdvertRequest) {
+  public Advert createAdvert(CreateAdvertRequest createAdvertRequest) {
     Advert advert = advertDtoConverter.convertToAdvert(createAdvertRequest);
-    return advertDtoConverter.convertToAdvertDetailsDto(advertRepository.save(advert));
+    return advertRepository.save(advert);
   }
 
-  public void saveAdvert(Advert advert) {
-    advertRepository.save(advert);
+  public Advert saveAdvert(Advert advert) {
+    return advertRepository.save(advert);
   }
 
   public void updateAdvert(UpdateAdvertRequest updateAdvertRequest, Long id)
@@ -79,27 +81,41 @@ public class AdvertService {
     advertRepository.save(advert);
   }
 
-  public List<AdvertCardInfoDto> findFilteredAdverts(GetFilteredAdvertsRequest request) {
-    List<AdvertCardInfoDto> list = new ArrayList<>();
-    advertRepository.findAdvertsByFullFilter(
-            request.getProvince(),
-            request.getPosition(),
-            request.getDepartment(),
-            request.getSearchText())
-        .stream().forEach(advert -> {
-          try {
-            list.add(
-                advertDtoConverter.convertToAdvertCardInfo(advert)
-            );
-          } catch (SQLException e) {
-            throw new RuntimeException(e);
-          }
-        });
-    return list;
+  public List<AdvertCardInfoDto> findFilteredAdverts(GetFilteredAdvertsRequest request, Long id)
+      throws SQLException, UserNotFoundException {
+
+    if (id == -1) {
+      List<AdvertCardInfoDto> list = new LinkedList<>();
+      advertRepository.findAdvertsByFullFilter(request.getProvince(), request.getPosition(),
+          request.getDepartment(), request.getSearchText()).forEach(advert -> {
+        try {
+          list.add(advertDtoConverter.convertToAdvertCardInfo(advert));
+        } catch (SQLException e) {
+          throw new RuntimeException(e);
+        }
+      });
+      return list;
+    }
+    List<AdvertCardInfoDto> returningList = new LinkedList<>();
+    List<AdvertOwner> list = advertOwnerRepository.findAdvertOwnersByUserAndAdvert_Active(
+        userService.findById(id), true);
+    for (AdvertOwner advertOwner : list) {
+      Advert advert = advertOwner.getAdvert();
+      if (advert.getProvince().contains(request.getProvince()) &&
+          advert.getPosition().contains(request.getPosition()) &&
+          advert.getDepartment().contains(request.getDepartment()) && (advert.getName().contains(
+          request.getSearchText()) || advert.getSummary().contains(request.getSearchText()))) {
+        returningList.add(advertDtoConverter.convertToAdvertCardInfo(advert));
+      }
+    }
+    return returningList;
   }
 
   public void addUserToAdvert(Advert advert, ApplicationDetail application) {
     advert.addApplication(application);
+    if (advert.getApplications().size() == advert.getCapacity()) {
+      closeAdvert(advert);
+    }
     advertRepository.save(advert);
   }
 
@@ -154,10 +170,10 @@ public class AdvertService {
     Page<AdvertOwner> test;
 
     if (creatorID != -1) {
-      test = advertOwnerRepository.findAdvertOwnersByUser(
-          userService.findById(creatorID), pr);
+      test = advertOwnerRepository.findAdvertOwnersByUserAndAdvert_Active(
+          userService.findById(creatorID), pr, true);
     } else {
-      test = advertOwnerRepository.findAll(pr);
+      test = advertOwnerRepository.findAdvertOwnersByAdvert_Active(pr, true);
     }
     return test.map(advertOwner -> {
       try {
@@ -179,5 +195,27 @@ public class AdvertService {
         .forEach(applicationDetail -> list.add(
             userDtoConverter.convertToAdvertAppliedUserInfoResponse(applicationDetail.getUser())));
     return list;
+  }
+
+  public Boolean canClose(Long id) throws AdvertNotFoundException {
+    for (ApplicationDetail application : findById(id).getApplications()) {
+      if (!application.isDecided()) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  public void closeAdvert(Advert advert) {
+    advert.setActive(false);
+    advertRepository.save(advert);
+    emailService.sendSimpleMessage(advert.getAdvertOwner().getUser().getEmail(),
+        "Advert has been closed",
+        advert.getName() + " has been closed!");
+  }
+
+  public boolean isAdvertActive(Long id) throws AdvertNotFoundException {
+    return findById(id).isActive();
   }
 }

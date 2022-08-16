@@ -114,6 +114,26 @@ public class Advert {
 
   public Advert(String name, String summary, Date startDate, Date endDate, String position,
       int capacity, String district, String province, int provinceID,
+      String jobDefinition, boolean active, String companyName, String department,
+      AdvertOwner advertOwner) {
+    this.name = name;
+    this.summary = summary;
+    this.startDate = startDate;
+    this.endDate = endDate;
+    this.position = position;
+    this.capacity = capacity;
+    this.district = district;
+    this.province = province;
+    this.provinceID = provinceID;
+    this.jobDefinition = jobDefinition;
+    this.active = active;
+    this.companyName = companyName;
+    this.department = department;
+    this.advertOwner = advertOwner;
+  }
+
+  public Advert(String name, String summary, Date startDate, Date endDate, String position,
+      int capacity, String district, String province, int provinceID,
       String jobDefinition, boolean active, String companyName, String department) {
     this.name = name;
     this.summary = summary;
@@ -292,6 +312,7 @@ public class Advert {
   public void addApplication(ApplicationDetail application) {
     applications.add(application);
   }
+
 
   @Override
   public boolean equals(Object o) {
