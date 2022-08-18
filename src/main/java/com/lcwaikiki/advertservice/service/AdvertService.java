@@ -7,7 +7,7 @@ import com.lcwaikiki.advertservice.dto.model.advert.DashboardAdvertTableInfoDto;
 import com.lcwaikiki.advertservice.dto.request.advert.CreateAdvertRequest;
 import com.lcwaikiki.advertservice.dto.request.advert.GetFilteredAdvertsRequest;
 import com.lcwaikiki.advertservice.dto.request.advert.UpdateAdvertRequest;
-import com.lcwaikiki.advertservice.dto.response.advert.AdminAdvertInfoResponse;
+import com.lcwaikiki.advertservice.dto.response.advert.AdvertInfoResponse;
 import com.lcwaikiki.advertservice.dto.response.user.AdvertAppliedUserInfoResponse;
 import com.lcwaikiki.advertservice.exception.AdvertNotFoundException;
 import com.lcwaikiki.advertservice.exception.UserNotFoundException;
@@ -184,7 +184,7 @@ public class AdvertService {
     });
   }
 
-  public AdminAdvertInfoResponse getAdvertInfo(Long id) throws AdvertNotFoundException {
+  public AdvertInfoResponse getAdvertInfo(Long id) throws AdvertNotFoundException {
     return advertDtoConverter.convertToAdminInfoResponse(findById(id));
   }
 
@@ -208,11 +208,9 @@ public class AdvertService {
   }
 
   public void closeAdvert(Advert advert) {
-    advert.setActive(false);
-    advertRepository.save(advert);
     emailService.sendSimpleMessage(advert.getAdvertOwner().getUser().getEmail(),
-        "Advert has been closed",
-        advert.getName() + " has been closed!");
+        "Advert has reached the maximum number of applications.",
+        advert.getName() + " cannot get applicants anymore. Please handle the applications.");
   }
 
   public boolean isAdvertActive(Long id) throws AdvertNotFoundException {

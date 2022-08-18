@@ -113,7 +113,6 @@ public class OperationHandlerService {
 
     userService.addApplicationToUser(user, application);
     advertService.addUserToAdvert(advert, application);
-
     applicationDetailRepository.save(application);
   }
 

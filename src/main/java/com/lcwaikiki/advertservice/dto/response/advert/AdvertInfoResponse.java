@@ -1,6 +1,6 @@
 package com.lcwaikiki.advertservice.dto.response.advert;
 
-public class AdminAdvertInfoResponse {
+public class AdvertInfoResponse {
 
   private Long id;
   private String name;
@@ -17,7 +17,7 @@ public class AdminAdvertInfoResponse {
   private String department;
   private String companyName;
 
-  public AdminAdvertInfoResponse(Long id, String name, String summary, String startDate,
+  public AdvertInfoResponse(Long id, String name, String summary, String startDate,
       String endDate, String position, int capacity, String district, String province,
       int provinceID, String jobDefinition, boolean isOpen, String companyName, String department) {
     this.id = id;

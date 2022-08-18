@@ -6,7 +6,7 @@ import com.lcwaikiki.advertservice.dto.model.advert.DashboardAdvertTableInfoDto;
 import com.lcwaikiki.advertservice.dto.request.advert.CreateAdvertRequest;
 import com.lcwaikiki.advertservice.dto.request.advert.GetFilteredAdvertsRequest;
 import com.lcwaikiki.advertservice.dto.request.advert.UpdateAdvertRequest;
-import com.lcwaikiki.advertservice.dto.response.advert.AdminAdvertInfoResponse;
+import com.lcwaikiki.advertservice.dto.response.advert.AdvertInfoResponse;
 import com.lcwaikiki.advertservice.dto.response.advert.FilteredAdvertResponse;
 import com.lcwaikiki.advertservice.dto.response.user.UserApplicationTableAdvertInfo;
 import com.lcwaikiki.advertservice.model.Advert;
@@ -111,8 +111,8 @@ public class AdvertDtoConverter {
     );
   }
 
-  public AdminAdvertInfoResponse convertToAdminInfoResponse(Advert advert) {
-    return new AdminAdvertInfoResponse(
+  public AdvertInfoResponse convertToAdminInfoResponse(Advert advert) {
+    return new AdvertInfoResponse(
         advert.getId(), advert.getName(), advert.getSummary(), advert.getStartDate().toString(),
         advert.getEndDate().toString(),
         advert.getPosition(), advert.getCapacity(), advert.getDistrict(), advert.getProvince(),

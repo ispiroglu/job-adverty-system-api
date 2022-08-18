@@ -8,7 +8,7 @@ import com.lcwaikiki.advertservice.dto.request.advert.GetFilteredAdvertsRequest;
 import com.lcwaikiki.advertservice.dto.request.advert.UpdateAdvertPhotoRequest;
 import com.lcwaikiki.advertservice.dto.request.advert.UpdateAdvertRequest;
 import com.lcwaikiki.advertservice.dto.request.applicationdetail.UpdateApplicationStatusRequest;
-import com.lcwaikiki.advertservice.dto.response.advert.AdminAdvertInfoResponse;
+import com.lcwaikiki.advertservice.dto.response.advert.AdvertInfoResponse;
 import com.lcwaikiki.advertservice.dto.response.user.AdvertAppliedUserInfoResponse;
 import com.lcwaikiki.advertservice.exception.AdvertIsFullException;
 import com.lcwaikiki.advertservice.exception.AdvertNotFoundException;
@@ -67,13 +67,13 @@ public class AdvertController {
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
   public ResponseEntity<AdvertDetailsDto> create(
-      @RequestBody CreateAdvertRequest createAdvertRequest, @RequestParam Long creatorID)
+      @RequestBody CreateAdvertRequest createAdvertRequest, @RequestParam Long userID)
       throws UserNotFoundException {
-    return ResponseEntity.ok(operationHandlerService.createAdvert(createAdvertRequest, creatorID));
+    return ResponseEntity.ok(operationHandlerService.createAdvert(createAdvertRequest, userID));
   }
 
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @PatchMapping("/{id}/adminView")
+  @PatchMapping("/{id}/advertInfo")
   public void update(@RequestBody UpdateAdvertRequest updateAdvertRequest,
       @PathVariable long id)
       throws AdvertNotFoundException, ParseException {
@@ -89,8 +89,8 @@ public class AdvertController {
 
   @GetMapping
   public ResponseEntity<Page<AdvertCardInfoDto>> getAdvertCards(@RequestParam int page,
-      @RequestParam Long creatorID) throws UserNotFoundException {
-    return ResponseEntity.ok(advertService.getAdvertCards(page, creatorID));
+      @RequestParam Long userID) throws UserNotFoundException {
+    return ResponseEntity.ok(advertService.getAdvertCards(page, userID));
   }
 
   @PatchMapping("/filter") // Patch ??
@@ -157,8 +157,8 @@ public class AdvertController {
     return ResponseEntity.ok(advertService.getEndingAdverts());
   }
 
-  @GetMapping("/{id}/adminView")
-  public ResponseEntity<AdminAdvertInfoResponse> getAdvertInfo(@PathVariable Long id)
+  @GetMapping("/{id}/advertInfo")
+  public ResponseEntity<AdvertInfoResponse> getAdvertInfo(@PathVariable Long id)
       throws AdvertNotFoundException {
     return ResponseEntity.ok(advertService.getAdvertInfo(id));
   }
